@@ -1,7 +1,7 @@
 # CSAforExcitedState
 Determine QM residues for QM/MM absorption spectra calculations
 
-**What’s inside**
+## What’s inside
 
 ```qm_utils.py```
 
@@ -30,3 +30,10 @@ excited-state VDD charges for the N-th bright root (by oscillator strength ≥ t
 ```charge_shift_by_residue.py```
 
 Sums per-residue charges (ground/excited), computes Δ = exc − grd per frame, and optionally scores residues via normalized |Δ| (normalization per frame uses the max over non-chromophore residues). Can write a selected residue list and a CSA-refined QM region.
+
+## Requirements
+Python 3.8+: ```pytraj```, ```numpy```, ```pandas```
+
+AMBER prmtop + per-frame coordinates readable by pytraj (e.g., ```rst7```)
+
+TeraChem outputs: excited state calculations output. The ground state atomic charges are usually in the scratch folder.
