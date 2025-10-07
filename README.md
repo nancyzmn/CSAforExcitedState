@@ -5,11 +5,11 @@ Determine QM residues for QM/MM absorption spectra calculations
 
 ```qm_utils.py```
 
-  ```get_qm_idx(residues, topfile, infile, chromophore_resid)```
+- ```get_qm_idx(residues, topfile, infile, chromophore_resid)```
 
 Build QM atom indices (0-based) from a residue list (1-based). Make sure all QM/MM cuts are at C-C or C-H bonds
 
-   ```partition_qm_atoms_by_residues_loo(...)```
+- ```partition_qm_atoms_by_residues_loo(...)```
 
 Leave-one-out (LOO) partition of the current QM region into per-residue atom sets: atoms “belonging” to residue r are those that disappear from the QM set when r is removed (chromophore atoms kept).
 
