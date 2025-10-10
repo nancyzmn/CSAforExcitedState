@@ -1,0 +1,32 @@
+scrdir          ./scr.tddft.ref
+prmtop          ../3nedFH_sphere_nobox.prmtop
+qmindices       ../region_ref.qm
+coordinates     frame.rst7
+min_restart     no
+                                                                                   
+#QM                                                                                
+                                                                                   
+basis           6-31gss
+method          wpbe
+rc_w            0.22
+convthre        1e-7
+threall         1e-14
+charge          1
+spinmult        1
+purify          no
+poptype         vdd
+                                                                                   
+#CIS                                                                               
+cis             yes
+cisnumstates    5
+cisguessvecs    5
+cismaxiter      200
+cischarges      yes
+cisntos         yes
+
+run             energy
+
+maxit           300
+                                                                                                                                              
+gpus            1
+gpumem          256
