@@ -73,7 +73,7 @@ class QMRegionSelector:
         if self.cfg["osc-threshold"] < 0 or self.cfg["osc-threshold"] > 1:
             raise SystemExit("The oscillator strength threshold must be between 0 and 1")
         
-        if self.cfg["root-max"] < ["bright-index"]:
+        if self.cfg["root-max"] < self.cfg["bright-index"]:
             raise SystemExit("The highest excited state considered must be larger than the brightest excited state to choose")
         
         if self.cfg["score-threshold"] < 0 or self.cfg["score-threshold"] > 1:
