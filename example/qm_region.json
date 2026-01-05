@@ -1,0 +1,30 @@
+{
+  "topfile": "3nedFH_sphere_nobox.prmtop",
+  "chromophore_resid": 66,
+  "resid_last_index": 228,
+  "dist-threshold": 4.5,
+  "chromophore_atoms_file": "chromophore_list.txt",
+
+  "dir_pattern": "frame*",
+  "frame_filename": "frame.rst7",
+  "dir_root": ".",
+
+  "out_ref_atoms": "region_ref_test.qm",
+  "out_ref_residues": "residue_list_test.txt",
+
+  "_comment": "The following part is only needed if you want to run CSA",
+  "tddft_output_name": "tddft.ref.out",
+  "bright-index": 1,
+  "scratch-dir": "scr.tddft.ref",
+  "ground_charge_file": "charge_vdd.xls",
+  "osc-threshold": 0.80,
+  "root-max": 6,
+  "out-ground": "output_dft_vdd_test.dat",
+  "out-excited": "output_tddft_vdd_test.dat",
+
+  "score-threshold": 0.015,
+  "out-csa-charge-shift": "charge_shift_by_residue_test.csv",
+  "out-csa-score": "csa_score_summary_test.csv",
+  "out-selected-residues": "residue_list_csa_test.txt",
+  "out-selected-qmregion": "region_CSA_test.qm"
+}
