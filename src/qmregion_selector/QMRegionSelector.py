@@ -4,11 +4,18 @@ from typing import Any, Dict, List
 import numpy as np
 import pandas as pd
 
-from qm_utils import get_qm_idx
-from io_utils import find_frame_dirs
-from parse_utils import parse_int_list_file, parse_ground_vdd, parse_roots_table_for_osc, parse_excited_vdd, parse_charges_file
+from .qm_utils import get_qm_idx
+from .io_utils import find_frame_dirs
+from .parse_utils import parse_int_list_file, parse_ground_vdd, parse_roots_table_for_osc, parse_excited_vdd, parse_charges_file
 
-import pytraj as pt
+try:
+    import pytraj as pt
+except ImportError as e:
+    raise SystemExit(
+        "pytraj is required but not found.\n"
+        "If you're on a cluster, try: module load AMBER\n"
+        "Then re-run this command."
+    ) from e
 
 class QMRegionSelector:
     def __init__(self, config_path: str):
