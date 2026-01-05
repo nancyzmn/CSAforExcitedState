@@ -73,7 +73,7 @@ This package uses `pytraj`, which is typically provided by **AMBERTools** on HPC
 On a cluster/module system, load AMBER before running:
 
 ```bash
-module load AMBER
+module load Amber/24-CUDA-12.2.1
 ```
 
 AMBER prmtop + per-frame coordinates readable by pytraj (e.g., ```rst7```)
