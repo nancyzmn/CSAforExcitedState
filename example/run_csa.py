@@ -1,4 +1,4 @@
-from QMRegionSelector import QMRegionSelector
+from qmregion_selector import QMRegionSelector
 
 selector = QMRegionSelector("qm_region.json")
 selector.getRefQM()
