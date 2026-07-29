@@ -6,7 +6,10 @@ import pandas as pd
 
 from .qm_utils import get_qm_idx
 from .io_utils import find_frame_dirs
-from .parse_utils import parse_int_list_file, parse_ground_vdd, parse_roots_table_for_osc, parse_excited_vdd, parse_charges_file
+from .parse_utils import parse_int_list_file
+from .schema import ChargeSet
+from .adapters import get_adapter
+from .selection import select_bright_state
 
 try:
     import pytraj as pt
@@ -22,6 +25,8 @@ class QMRegionSelector:
         self.config_path = config_path
         self.cfg = self.read_config_json(config_path)
         self.chromophore_atoms = parse_int_list_file(self.cfg["chromophore_atoms_file"])
+        self.ground_charges: Dict[Path, ChargeSet] = {}
+        self.excited_charges: Dict[Path, ChargeSet] = {}
         self.validate()
     
     def read_config_json(self, path: str) -> Dict[str, Any]:
@@ -56,13 +61,16 @@ class QMRegionSelector:
         - `osc-threshold` must be within [0, 1].
         - `root-max` must be >= `bright-index`.
         - `score-threshold` must be within [0, 1].
+        - `es_code` (default `"terachem"`) must name a registered ES-code adapter.
         - If `resid_last_index` < `chromophore_resid`, a warning is printed (the
         chromophore can still be considered if selected).
-        
+
         Sets the following instance attributes:
         - `self.frame_dirs`: frame directories in `dir_root`
         - `self.first_frame_path`: path to a geometry that pytraj needs for residue definition
-        
+        - `self.adapter`: the `ElectronicStructureAdapter` named by `es_code`
+        - `self.charge_scheme`: charge scheme (default `"vdd"`) passed to the adapter
+
         Raises:
             SystemExit:
                 If any configuration value is invalid, or if no matching frame
@@ -85,6 +93,13 @@ class QMRegionSelector:
         
         if self.cfg["score-threshold"] < 0 or self.cfg["score-threshold"] > 1:
             raise SystemExit("The CSA score threshold must be between 0 and 1")
+
+        es_code = self.cfg.get("es_code", "terachem")
+        try:
+            self.adapter = get_adapter(es_code)
+        except ValueError as e:
+            raise SystemExit(str(e))
+        self.charge_scheme = self.cfg.get("charge_scheme", "vdd")
 
         if self.cfg["resid_last_index"] < self.cfg["chromophore_resid"]:
             print(
@@ -195,13 +210,17 @@ class QMRegionSelector:
 
     def getGroundCharge(self) -> None:
         """
-        Collect and parse ground-state VDD charge files for each frame directory.
-        
-        For every directory in `self.frame_dirs`, this method looks for the ground-state VDD output file at:
+        Collect and parse ground-state charge files for each frame directory,
+        via `self.adapter` (code named by `es_code`, default TeraChem VDD).
+
+        For every directory in `self.frame_dirs`, this method looks for the ground-state charge file at:
             <frame_dir> / self.cfg["scratch-dir"] / self.cfg["ground_charge_file"]
 
         Output:
             Write per-frame ground-state charge output files at `<frame_dir>/self.cfg["out-ground"]`.
+
+        Sets:
+            `self.ground_charges`: Dict[Path, ChargeSet] mapping each frame directory to its parsed ground-state charges.
         """
         for d in self.frame_dirs:
             ground_src = d / self.cfg["scratch-dir"] / self.cfg["ground_charge_file"]
@@ -210,24 +229,30 @@ class QMRegionSelector:
                 print(f"[WARN] Missing ground-state VDD file: {ground_src}")
             else:
                 try:
-                    parse_ground_vdd(ground_src, ground_dst)
+                    charge_set = self.adapter.parse_ground_charges(ground_src, self.charge_scheme)
+                    charge_set.to_file(ground_dst)
+                    self.ground_charges[d] = charge_set
                     print(f"[OK] Wrote ground VDD → {ground_dst}")
                 except Exception as e:
                     print(f"[ERROR] Failed to process ground VDD in {d}: {e}")
-    
+
     def getExcitedCharge(self) -> None:
         """
-        Extract and write excited-state VDD charges for a selected “bright” TDDFT root per frame.
+        Extract and write excited-state charges for a selected “bright” TDDFT root per frame,
+        via `self.adapter` (code named by `es_code`, default TeraChem VDD).
 
         For each directory in `self.frame_dirs`, this method:
         1) Reads the TDDFT output file `<frame_dir> / self.cfg["tddft_output_name"]`.
         2) Parses the TDDFT “roots table” to obtain oscillator strengths up to `self.cfg["root-max"]`
         3) Filters roots whose oscillator strength is >= `self.cfg["osc-threshold"]` and
         selects the N-th brightest root, where N = `self.cfg["bright-index"]` (1-based).
-        4) Parse the VDD charges of this root
-        
+        4) Parse the charges of this root
+
         Output:
             Write per-frame excited-state charge output files at `<frame_dir>/self.cfg["out-excited"]`.
+
+        Sets:
+            `self.excited_charges`: Dict[Path, ChargeSet] mapping each frame directory to its parsed excited-state charges.
         """
         for d in self.frame_dirs:
             tddft_path = d / self.cfg["tddft_output_name"]
@@ -236,21 +261,22 @@ class QMRegionSelector:
                 continue
 
             tddft_text = tddft_path.read_text(errors="ignore")
-            osc_list = parse_roots_table_for_osc(tddft_text, self.cfg["root-max"])
-            if not osc_list:
+            states = self.adapter.parse_excited_states(tddft_text, self.cfg["root-max"])
+            if not states:
                 print("[WARN] Could not find roots table / oscillator strengths.")
                 continue
-            bright = [(r, o) for (r, o) in osc_list if o >= self.cfg["osc-threshold"]]
-            if len(bright) < self.cfg["bright-index"]:
+            bright_state = select_bright_state(states, self.cfg["osc-threshold"], self.cfg["bright-index"])
+            if bright_state is None:
                 return None
-            bright_root = bright[self.cfg["bright-index"] - 1][0]
-            if bright_root is None:
-                print(f"[WARN] No root within {self.cfg['root-max']} with osc >= {self.cfg['osc-threshold']}.")
-                continue
+            bright_root = bright_state.root
             print(f"Bright state: Root {bright_root}")
-            
+
             excited_dst = d / self.cfg['out-excited']
-            parse_excited_vdd(tddft_text, bright_root, len(self.qm_ref_atoms), excited_dst)
+            charge_set = self.adapter.parse_excited_charges(
+                tddft_text, bright_root, len(self.qm_ref_atoms), self.charge_scheme
+            )
+            charge_set.to_file(excited_dst)
+            self.excited_charges[d] = charge_set
             print(f"[OK] Wrote excited VDD → {excited_dst}")
 
     def partition_qm_atoms_by_residues_loo(self) -> Dict[int, List[int]]:
@@ -314,14 +340,25 @@ class QMRegionSelector:
 
         records: List[Dict[str, float | int | str]] = []
         for d in self.frame_dirs:
-            g_path = d / self.cfg["out-ground"]
-            e_path = d / self.cfg["out-excited"]
-            if not g_path.exists() or not e_path.exists():
-                print(f"[WARN] Skipping {d.name}: missing {g_path.name if not g_path.exists() else e_path.name}")
-                continue
+            ground_set = self.ground_charges.get(d)
+            excited_set = self.excited_charges.get(d)
+            if ground_set is None or excited_set is None:
+                g_path = d / self.cfg["out-ground"]
+                e_path = d / self.cfg["out-excited"]
+                if not g_path.exists() or not e_path.exists():
+                    print(f"[WARN] Skipping {d.name}: missing {g_path.name if not g_path.exists() else e_path.name}")
+                    continue
+                if ground_set is None:
+                    ground_set = ChargeSet.from_file(
+                        g_path, scheme=self.charge_scheme, state_label="S0", source_code=self.adapter.name
+                    )
+                if excited_set is None:
+                    excited_set = ChargeSet.from_file(
+                        e_path, scheme=self.charge_scheme, state_label="excited", source_code=self.adapter.name
+                    )
 
-            g = parse_charges_file(g_path)
-            e = parse_charges_file(e_path)
+            g = ground_set.charges
+            e = excited_set.charges
             if (len(g) < len(self.qm_ref_atoms)) or (len(e) < len(self.qm_ref_atoms)):
                 print(f"[WARN] Skipping {d.name}: charge vector shorter than reference QM region "
                     f"(ground={len(g)}, excited={len(e)}, qm={len(self.qm_ref_atoms)})")
