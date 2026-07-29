@@ -1,0 +1,12 @@
+name: qmregion-selector
+channels:
+  - conda-forge
+dependencies:
+  - python>=3.8
+  - ambertools      # provides pytraj
+  - numpy
+  - pandas
+  - pytest
+  - pip
+  - pip:
+      - -e .

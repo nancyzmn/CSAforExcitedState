@@ -17,11 +17,21 @@ This repo is designed for workflows like:
   - a residue list text file
 
 ### 2) Charge Shift Analysis
-If you provide TeraChem outputs and charge files, QMRegion Selector can:
-- Parse ground-state VDD charges and excited-state VDD charges (for selected bright root)
+If you provide electronic structure (ES) code output and charge files, QMRegion Selector can:
+- Parse ground-state charges and excited-state charges (for selected bright root)
 - Compute per-residue charge shifts (Δq = q_excited − q_ground, aggregated per residue)
 - Score residues and pick those exceeding a score threshold
 - Write CSA summary tables and a refined QM region definition
+
+Parsing is done through a small adapter interface
+(`qmregion_selector.adapters.ElectronicStructureAdapter`), so CSA isn't tied to
+one ES code. TeraChem/VDD is the only adapter shipped today
+(`qmregion_selector.adapters.TeraChemAdapter`); adding support for another
+code (Q-Chem, ORCA, Psi4, ...) means writing a class that implements
+`parse_ground_charges`, `parse_excited_states`, and `parse_excited_charges`,
+returning the code-agnostic `ChargeSet`/`ExcitedState` types from
+`qmregion_selector.schema`, and registering it with `@register_adapter`.
+Select which adapter to use via the `es_code` config key (see below).
 
 ---
 
@@ -63,14 +73,30 @@ The main entrypoint expects a JSON config like:
 }
 ```
 
-## Requirements
-Python 3.8+: ```pytraj```, ```numpy```, ```pandas```
+Two more keys are accepted but optional, both defaulting to today's only
+supported values so existing configs (like the one above) don't need any
+changes:
+- `"es_code"` (default `"terachem"`): which `ElectronicStructureAdapter` to
+  parse ES output with.
+- `"charge_scheme"` (default `"vdd"`): which charge partitioning scheme to
+  request from that adapter.
 
-AMBERTools / `pytraj` (required at runtime)
-This package uses `pytraj`, which is typically provided by **AMBERTools** on HPC systems.  
-`pytraj` is **not installed via pip** by default here—this project assumes you have AMBERTools available and loaded.
+## Installation
 
-On a cluster/module system, load AMBER before running:
+This repo uses [mamba](https://mamba.readthedocs.io/) to manage its
+environment, since `pytraj` (needed for the Amber/MM side) comes from
+AMBERTools rather than PyPI:
+
+```bash
+mamba env create -f environment.yml
+mamba activate qmregion-selector
+```
+
+This installs AMBERTools (providing `pytraj`), `numpy`, `pandas`, `pytest`,
+and the package itself (editable).
+
+If you're on an HPC system where you can't create your own conda/mamba
+environments, an already-installed Amber module may work instead, e.g.:
 
 ```bash
 module load Amber/24-CUDA-12.2.1
@@ -78,7 +104,8 @@ module load Amber/24-CUDA-12.2.1
 
 AMBER prmtop + per-frame coordinates readable by pytraj (e.g., ```rst7```)
 
-TeraChem outputs: excited state calculations output. The ground state atomic charges are usually in the scratch folder.
+ES code outputs: excited state calculation output, e.g. TeraChem TDDFT. The
+ground state atomic charges are usually in the scratch folder.
 
 ## File conventions
 
