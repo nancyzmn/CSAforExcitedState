@@ -1,6 +1,6 @@
 def __getattr__(name):
-    # Deferred so that importing submodules that don't need pytraj (schema,
-    # adapters, selection) doesn't force a pytraj import at package-init time.
+    # Deferred so that importing submodules that don't need MDAnalysis (schema,
+    # adapters, selection) doesn't force an MDAnalysis import at package-init time.
     if name == "QMRegionSelector":
         from .QMRegionSelector import QMRegionSelector as _QMRegionSelector
         # The submodule (QMRegionSelector.py) and the class share a name;

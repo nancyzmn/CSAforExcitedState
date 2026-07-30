@@ -137,7 +137,6 @@ class QMRegionSelector:
                 residue `r` to the chromophore residue across frames.
         """
         residues = list(range(1, self.cfg["resid_last_index"] + 1))
-        sel_templates = {r: f"nativecontacts :{self.cfg['chromophore_resid']} :{r} mindist" for r in residues}
 
         per_res_dists: Dict[int, List[float]] = {r: [] for r in residues}
         for d in self.frame_dirs:
@@ -145,12 +144,13 @@ class QMRegionSelector:
             if not fpath.exists():
                 print("WARNING: Missing frame file: %s (skipping)", fpath)
                 continue
-            traj = pt.load(str(fpath), top=str(self.cfg["topfile"]))
-            # One frame per dir assumed; use pytraj nativecontacts for min distance
+            u = load_universe(str(self.cfg["topfile"]), str(fpath))
+            chromo_positions = u.select_atoms(f"resid {self.cfg['chromophore_resid']}").positions
+            # One frame per dir assumed; minimum inter-atomic distance to the chromophore
             for r in residues:
                 try:
-                    res = pt.compute(sel_templates[r], traj)
-                    val = float(res['Contacts_00000[mindist]'][0])
+                    res_positions = u.select_atoms(f"resid {r}").positions
+                    val = float(distance_array(chromo_positions, res_positions).min())
                 except Exception as e:
                     print(f"ERROR: Failed distance for residue {r} in {fpath}: {e}")
                     val = np.nan
