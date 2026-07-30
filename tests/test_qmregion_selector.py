@@ -52,6 +52,7 @@ def selector(tmp_path) -> QMRegionSelector:
         "out-csa-score": str(tmp_path / "csa_score_summary.csv"),
         "out-selected-residues": str(tmp_path / "residue_list_csa.txt"),
         "out-selected-qmregion": str(tmp_path / "region_CSA.qm"),
+        "out-manifest": str(tmp_path / "run_manifest.json"),
     }
     config_path = tmp_path / "qm_region.json"
     config_path.write_text(json.dumps(config))
@@ -79,3 +80,30 @@ def test_write_ref_outputs_round_trips_golden_values(selector, tmp_path):
     written_residues = _read_int_list(Path(selector.cfg["out_ref_residues"]))
     assert written_atoms == golden_atoms
     assert written_residues == golden_residues
+
+
+def test_get_ref_qm_records_manifest_results(selector):
+    golden_residues = _read_int_list(FIXTURES_DIR / "residue_list.txt")
+    golden_atoms = _read_int_list(FIXTURES_DIR / "region_ref.qm")
+
+    selector.getRefQM()
+
+    assert selector.manifest_results["dist_threshold_used"] == 4.5
+    assert selector.manifest_results["qm_ref_residues"] == golden_residues
+    assert selector.manifest_results["qm_ref_atoms_count"] == len(golden_atoms)
+    assert isinstance(selector.manifest_results["qm_ref_atoms_sha256"], str)
+
+
+def test_write_manifest_contains_config_verbatim_and_recorded_results(selector):
+    selector.getRefQM()
+    selector.write_manifest()
+
+    from qmregion_selector.manifest import RunManifest
+
+    manifest = RunManifest.from_file(selector.cfg["out-manifest"])
+    assert manifest.config == selector.cfg
+    assert manifest.results == selector.manifest_results
+    assert manifest.qmregion_selector_version == "0.1.0"
+    # This sandbox's fixture config isn't itself a git checkout of anything
+    # relevant, but the manifest should still describe *this package's* repo.
+    assert manifest.git_commit is not None

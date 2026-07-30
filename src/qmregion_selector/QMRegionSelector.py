@@ -11,6 +11,7 @@ from .schema import ChargeSet, ExcitedState
 from .adapters import get_adapter
 from .selection import select_bright_state
 from .convergence import resolve_scan
+from .manifest import RunManifest, hash_atom_indices
 
 try:
     from MDAnalysis.analysis.distances import distance_array
@@ -30,6 +31,7 @@ class QMRegionSelector:
         self.excited_charges: Dict[Path, ChargeSet] = {}
         self.bright_states: Dict[Path, ExcitedState] = {}
         self.charge_shift: Optional[pd.DataFrame] = None
+        self.manifest_results: Dict[str, Any] = {}
         self.validate()
     
     def read_config_json(self, path: str) -> Dict[str, Any]:
@@ -218,6 +220,11 @@ class QMRegionSelector:
         self.qm_ref_atoms = qm_all_atoms
         self.qm_ref_residues = selected_residues
 
+        self.manifest_results["dist_threshold_used"] = dist_threshold
+        self.manifest_results["qm_ref_residues"] = self.qm_ref_residues
+        self.manifest_results["qm_ref_atoms_count"] = len(self.qm_ref_atoms)
+        self.manifest_results["qm_ref_atoms_sha256"] = hash_atom_indices(self.qm_ref_atoms)
+
     def write_ref_outputs(self) -> None:
         """
         Output: 
@@ -283,6 +290,8 @@ class QMRegionSelector:
                 selected bright state (root, excitation energy, oscillator strength) — this is
                 the reference-region spectrum a `QMConvergenceStudy` CSA-threshold scan compares
                 candidate regions against, with no extra parsing or QM calculation required.
+            `self.manifest_results["method"]`/`["basis"]`: level of theory, if the adapter could
+                determine it from the ES output (see `write_manifest()`); None otherwise.
         """
         for d in self.frame_dirs:
             tddft_path = d / self.cfg["tddft_output_name"]
@@ -310,6 +319,16 @@ class QMRegionSelector:
             charge_set.to_file(excited_dst)
             self.excited_charges[d] = charge_set
             print(f"[OK] Wrote excited VDD → {excited_dst}")
+
+        if self.excited_charges:
+            first_charge_set = next(iter(self.excited_charges.values()))
+            self.manifest_results["method"] = first_charge_set.method
+            self.manifest_results["basis"] = first_charge_set.basis
+            if first_charge_set.method is None and first_charge_set.basis is None:
+                print(
+                    "[NOTE] method/basis not recorded for the manifest — auto-extraction "
+                    "is currently only implemented for TeraChem output."
+                )
 
     def partition_qm_atoms_by_residues_loo(self) -> Dict[int, List[int]]:
         """
@@ -507,3 +526,25 @@ class QMRegionSelector:
                                     self.cfg["chromophore_resid"])) | set(self.chromophore_atoms))
         np.savetxt(self.cfg["out-selected-qmregion"], np.array(np.unique(csa_qmregion), dtype=int), fmt="%d")
         print(f"[OK] Wrote selected QM region by CSA → {self.cfg['out-selected-qmregion']}")
+
+        self.manifest_results["score_threshold_used"] = self.cfg["score-threshold"]
+        self.manifest_results["csa_selected_residues"] = sorted(int(r) for r in selected)
+        self.manifest_results["csa_selected_atoms_count"] = len(csa_qmregion)
+        self.manifest_results["csa_selected_atoms_sha256"] = hash_atom_indices(csa_qmregion)
+
+    def write_manifest(self) -> None:
+        """
+        Write a run manifest recording what produced this run's outputs, so
+        results stay comparable across systems: code version/git commit, the
+        resolved config verbatim, and whatever this run has actually observed
+        so far (`self.manifest_results` — the QM region, method/basis, CSA
+        selection, ...). Can be called at any point in the pipeline; fields
+        for stages that haven't run yet are simply absent.
+
+        Output:
+            Write the manifest to `self.cfg.get("out-manifest", "run_manifest.json")`.
+        """
+        manifest = RunManifest.build(config=self.cfg, results=self.manifest_results)
+        out_path = self.cfg.get("out-manifest", "run_manifest.json")
+        manifest.to_file(out_path)
+        print(f"[OK] Wrote run manifest → {out_path}")
