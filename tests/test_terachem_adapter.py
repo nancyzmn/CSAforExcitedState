@@ -88,3 +88,19 @@ def test_select_bright_state_returns_none_when_threshold_unmet():
     text = (FRAME0 / "tddft.ref.out").read_text(errors="ignore")
     states = adapter.parse_excited_states(text, root_max=ROOT_MAX)
     assert select_bright_state(states, osc_threshold=0.99, bright_index=2) is None
+
+
+def test_parse_excited_charges_extracts_method_and_basis_for_manifest():
+    adapter = TeraChemAdapter()
+    text = (FRAME0 / "tddft.ref.out").read_text(errors="ignore")
+    parsed = adapter.parse_excited_charges(text, root=2, n_atoms=N_QM_ATOMS, scheme="vdd")
+    assert parsed.method == "wPBE"
+    assert parsed.basis == "6-31gss"
+
+
+def test_parse_excited_charges_leaves_method_and_basis_none_when_absent():
+    adapter = TeraChemAdapter()
+    text = "Root 2: VDD charges:\nC 0.100000\n"
+    parsed = adapter.parse_excited_charges(text, root=2, n_atoms=1, scheme="vdd")
+    assert parsed.method is None
+    assert parsed.basis is None

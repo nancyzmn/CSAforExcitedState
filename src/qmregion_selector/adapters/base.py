@@ -32,7 +32,14 @@ class ElectronicStructureAdapter(ABC):
     def parse_excited_charges(
         self, output_text: str, root: int, n_atoms: int, scheme: str
     ) -> ChargeSet:
-        """Parse per-atom charges for a specific excited-state root."""
+        """
+        Parse per-atom charges for a specific excited-state root.
+
+        Should also set the returned ChargeSet's `method`/`basis` fields when
+        the code's output states the level of theory, for run-manifest
+        provenance (see QMRegionSelector.write_manifest()) — best-effort;
+        leave them None if not readily available.
+        """
         ...
 
 

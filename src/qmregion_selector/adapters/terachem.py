@@ -15,6 +15,18 @@ _ROW_RE = re.compile(
     r"([-\d\.Ee]+)\s+"    # excitation energy
     r"([-\d\.Ee]+)\b"     # oscillator strength
 )
+_METHOD_RE = re.compile(r"^Method:\s*(\S+)", re.MULTILINE)
+_BASIS_RE = re.compile(r"^Using basis set:\s*(\S+)", re.MULTILINE)
+
+
+def _extract_method_basis(output_text: str) -> tuple[Optional[str], Optional[str]]:
+    """Best-effort extraction of the level of theory from job-setup lines TeraChem prints once per run."""
+    method_match = _METHOD_RE.search(output_text)
+    basis_match = _BASIS_RE.search(output_text)
+    return (
+        method_match.group(1) if method_match else None,
+        basis_match.group(1) if basis_match else None,
+    )
 
 
 @register_adapter
@@ -121,10 +133,13 @@ class TeraChemAdapter(ElectronicStructureAdapter):
         if not charges:
             print("[WARN] Could not extract VDD block for the bright root.")
 
+        method, basis = _extract_method_basis(output_text)
         return ChargeSet(
             charges=np.array(charges),
             scheme="vdd",
             state_label=f"S{root}",
             source_code=self.name,
             atom_labels=tuple(labels) if labels else None,
+            method=method,
+            basis=basis,
         )
