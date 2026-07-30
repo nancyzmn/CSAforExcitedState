@@ -173,26 +173,25 @@ see "3) QM-region convergence study" above.
 
 ## Installation
 
-This repo uses [mamba](https://mamba.readthedocs.io/) to manage its
-environment, since `pytraj` (needed for the Amber/MM side) comes from
-AMBERTools rather than PyPI:
+Requires Python >= 3.10. The MM/topology side is handled by
+[MDAnalysis](https://www.mdanalysis.org/) (not tied to Amber specifically —
+any topology/trajectory format MDAnalysis supports should work, though only
+Amber prmtop + `rst7` is tested here), which is a plain PyPI package, so a
+standard pip install is enough:
+
+```bash
+pip install -e .
+```
+
+If you'd rather use [mamba](https://mamba.readthedocs.io/)/conda (e.g. to
+also get `pytest` and pin the Python version in one step):
 
 ```bash
 mamba env create -f environment.yml
 mamba activate qmregion-selector
 ```
 
-This installs AMBERTools (providing `pytraj`), `numpy`, `pandas`, `pytest`,
-and the package itself (editable).
-
-If you're on an HPC system where you can't create your own conda/mamba
-environments, an already-installed Amber module may work instead, e.g.:
-
-```bash
-module load Amber/24-CUDA-12.2.1
-```
-
-AMBER prmtop + per-frame coordinates readable by pytraj (e.g., ```rst7```)
+AMBER prmtop + per-frame coordinates (e.g., ```rst7```)
 
 ES code outputs: excited state calculation output, e.g. TeraChem TDDFT. The
 ground state atomic charges are usually in the scratch folder.
