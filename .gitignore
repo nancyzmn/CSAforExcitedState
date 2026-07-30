@@ -8,4 +8,5 @@ __pycache__/
 example/*_test*.csv
 example/*_test*.txt
 example/*_test*.qm
+example/*_test*.json
 example/frame*/output_*_test.dat

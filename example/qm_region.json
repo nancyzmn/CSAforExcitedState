@@ -26,5 +26,7 @@
   "out-csa-charge-shift": "charge_shift_by_residue_test.csv",
   "out-csa-score": "csa_score_summary_test.csv",
   "out-selected-residues": "residue_list_csa_test.txt",
-  "out-selected-qmregion": "region_CSA_test.qm"
+  "out-selected-qmregion": "region_CSA_test.qm",
+
+  "out-manifest": "run_manifest_test.json"
 }

@@ -119,6 +119,43 @@ A single geometry (one frame directory) is a valid input to either scan —
 convergence is then judged on excitation energy alone, since spectral shape
 needs an ensemble of frames to be meaningful.
 
+### 4) Run manifest / provenance
+`selector.write_manifest()` writes a small JSON record of what produced a
+run's outputs, so results stay comparable across systems and reproducible
+later. It has two parts:
+- `config`: the resolved config dict, verbatim — everything that was *asked
+  for* (topology, thresholds, chromophore residue, ...), unmodified.
+- `results`: what was *actually* computed/observed — the resolved QM region
+  (residues, atom count, and a hash of the atom list, so two manifests can be
+  compared for an exact-region match without embedding the full list), the
+  method/basis TeraChem reported (see below), and the CSA selection if
+  `getCSARegion()` ran.
+
+Also records `qmregion_selector_version` (the installed package version) and,
+best-effort, `git_commit`/`git_dirty` if the code is running from a git
+checkout — `None` for both if not (e.g. installed from a tarball on an HPC
+system).
+
+`write_manifest()` can be called at any point in the pipeline — call it early
+for partial provenance, or after `getCSARegion()` for the full picture:
+
+```python
+selector.getRefQM()
+selector.write_ref_outputs()
+selector.getGroundCharge()
+selector.getExcitedCharge()
+selector.getChargeShiftPerResidue()
+selector.getCSARegion()
+selector.write_manifest()   # -> "run_manifest.json" (or "out-manifest" in config)
+```
+
+Method/basis are extracted automatically from TeraChem's output (it prints
+`Method: wPBE` / `Using basis set: 6-31gss` once per job) rather than typed
+into the config, so they can't drift out of sync with what was actually run.
+This is currently TeraChem-specific — `getExcitedCharge()` prints a `[NOTE]`
+if it can't determine them, which is expected for other ES-code adapters
+until they add the same extraction.
+
 ---
 
 ## Input configuration (JSON)
@@ -155,7 +192,9 @@ The main entrypoint expects a JSON config like:
   "out-csa-charge-shift": "charge_shift_by_residue_test.csv",
   "out-csa-score": "csa_score_summary_test.csv",
   "out-selected-residues": "residue_list_csa_test.txt",
-  "out-selected-qmregion": "region_CSA_test.qm"
+  "out-selected-qmregion": "region_CSA_test.qm",
+
+  "out-manifest": "run_manifest_test.json"
 }
 ```
 
@@ -170,6 +209,9 @@ changes:
 `"dist-threshold"` and `"score-threshold"` also each accept a list instead of
 a single number, to run a convergence scan instead of resolving one region —
 see "3) QM-region convergence study" above.
+
+`"out-manifest"` (default `"run_manifest.json"`): where `write_manifest()`
+writes its provenance record — see "4) Run manifest / provenance" above.
 
 ## Installation
 
