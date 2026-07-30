@@ -2,10 +2,10 @@ name: qmregion-selector
 channels:
   - conda-forge
 dependencies:
-  - python>=3.8
-  - ambertools      # provides pytraj
-  - numpy
+  - python>=3.10
+  - numpy>=2.0
   - pandas
+  - mdanalysis
   - pytest
   - pip
   - pip:
