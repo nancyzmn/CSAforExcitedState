@@ -1,0 +1,848 @@
+Startfile from command line: tddft_chromo2.in
+
+
+       ***********************************************************
+       *                    TeraChem v1.9-2021.09-dev            *
+       *  Git Version:                               *
+       *                   Development Version                   *
+       *           Chemistry at the Speed of Graphics!           *
+       ***********************************************************
+       * This program may only be used in connection with        *
+       * a valid license from PetaChem, LLC. Use of this program *
+       * or results thereof indicates acceptance of all terms    *
+       * and conditions stated in the license and that a valid   *
+       * license agreement between the user and PetaChem, LLC    *
+       * exists. PetaChem, LLC does not warrant the correctness  *
+       * of results or their suitability for any purpose.        *
+       * Please email bugs, suggestions, and comments to         *
+       *                  help@petachem.com                      *
+       *                                                         *
+       ***********************************************************
+
+
+       ***********************************************************
+       *  Compiled by henryw7      Wed Sep  1 17:41:35 PDT 2021  *
+       *  Supported architectures: sm_52 sm_61 sm_70 sm_75 sm_80 sm_86*
+       *  Build cuda_11.4.r11.4/compiler.30188945_0              *
+       ***********************************************************
+
+
+ Job started   Wed Nov 16 14:19:21 2022
+ On fire-21-00.cluster (available memory: 391510 MB)
+
+######################################### RUNTIME INFO ##########################################
+terachem tddft_chromo2.in 
+
+NVRM version: NVIDIA UNIX x86_64 Kernel Module  460.56  Tue Feb 23 23:31:36 UTC 2021
+GCC version:  gcc version 4.8.5 20150623 (Red Hat 4.8.5-39) (GCC) 
+
+	linux-vdso.so.1 =>  (0x00007ffcf61eb000)
+	libcurl.so.4 => /lib64/libcurl.so.4 (0x00007f0ed4fa6000)
+	libmpi.so.12 => /global/software/intel/2017.8.262/compilers_and_libraries_2017.8.262/linux/mpi/intel64/lib/libmpi.so.12 (0x00007f0ed4270000)
+	libdftbplus.so => /global/software/TeraChem/2021.09-intel-2017.8.262-CUDA-11.4.1/lib/libdftbplus.so (0x00007f0ed3d8a000)
+	libfsockets.so => /global/software/TeraChem/2021.09-intel-2017.8.262-CUDA-11.4.1/lib/libfsockets.so (0x00007f0ed3b86000)
+	libxmlf90.so => /global/software/TeraChem/2021.09-intel-2017.8.262-CUDA-11.4.1/lib/libxmlf90.so (0x00007f0ed3963000)
+	libthcbox.so.1 => /global/software/TeraChem/2021.09-intel-2017.8.262-CUDA-11.4.1/lib/libthcbox.so.1 (0x00007f0ed13cc000)
+	libOpenMM.so => /global/software/OpenMM/7.4.1-intel-2017.0.098-CUDA-9.0.176/lib/libOpenMM.so (0x00007f0ed0d6a000)
+	libgpubox.so.1 => /global/software/TeraChem/2021.09-intel-2017.8.262-CUDA-11.4.1/lib/libgpubox.so.1 (0x00007f0ed0b57000)
+	libtensorbox.so.1 => /global/software/TeraChem/2021.09-intel-2017.8.262-CUDA-11.4.1/lib/libtensorbox.so.1 (0x00007f0ed093b000)
+	libiobox.so.1 => /global/software/TeraChem/2021.09-intel-2017.8.262-CUDA-11.4.1/lib/libiobox.so.1 (0x00007f0ed072c000)
+	libmoleculebox.so.1 => /global/software/TeraChem/2021.09-intel-2017.8.262-CUDA-11.4.1/lib/libmoleculebox.so.1 (0x00007f0ed051a000)
+	libintbox.so.1 => /global/software/TeraChem/2021.09-intel-2017.8.262-CUDA-11.4.1/lib/libintbox.so.1 (0x00007f0ea2a90000)
+	libsqmbox.so.1 => /global/software/TeraChem/2021.09-intel-2017.8.262-CUDA-11.4.1/lib/libsqmbox.so.1 (0x00007f0ea2532000)
+	libgridbox.so.1 => /global/software/TeraChem/2021.09-intel-2017.8.262-CUDA-11.4.1/lib/libgridbox.so.1 (0x00007f0ea1ee6000)
+	libdftbox.so.1 => /global/software/TeraChem/2021.09-intel-2017.8.262-CUDA-11.4.1/lib/libdftbox.so.1 (0x00007f0ea1c01000)
+	libcibox.so.1 => /global/software/TeraChem/2021.09-intel-2017.8.262-CUDA-11.4.1/lib/libcibox.so.1 (0x00007f0ea12e1000)
+	libccbox.so.1 => /global/software/TeraChem/2021.09-intel-2017.8.262-CUDA-11.4.1/lib/libccbox.so.1 (0x00007f0ea0cc5000)
+	libsimbox.so.1 => /global/software/TeraChem/2021.09-intel-2017.8.262-CUDA-11.4.1/lib/libsimbox.so.1 (0x00007f0ea0aa8000)
+	liboptbox.so.1 => /global/software/TeraChem/2021.09-intel-2017.8.262-CUDA-11.4.1/lib/liboptbox.so.1 (0x00007f0ea086a000)
+	libsandboxbox.so.1 => /global/software/TeraChem/2021.09-intel-2017.8.262-CUDA-11.4.1/lib/libsandboxbox.so.1 (0x00007f0ea0659000)
+	libprotobuf.so.25 => /global/software/protobuf/3.14.0/lib/libprotobuf.so.25 (0x00007f0ea01a6000)
+	libcommbox.so.1 => /global/software/TeraChem/2021.09-intel-2017.8.262-CUDA-11.4.1/lib/libcommbox.so.1 (0x00007f0e9ff48000)
+	libcuda.so.1 => /lib64/libcuda.so.1 (0x00007f0e9e862000)
+	libcudart.so.11.0 => /global/software/TeraChem/2021.09-intel-2017.8.262-CUDA-11.4.1/lib/libcudart.so.11.0 (0x00007f0e9e5c0000)
+	libcublas.so.11 => /global/software/TeraChem/2021.09-intel-2017.8.262-CUDA-11.4.1/lib/libcublas.so.11 (0x00007f0e95687000)
+	libcufft.so.10 => /global/software/TeraChem/2021.09-intel-2017.8.262-CUDA-11.4.1/lib/libcufft.so.10 (0x00007f0e7fa07000)
+	libcusparse.so.11 => /global/software/TeraChem/2021.09-intel-2017.8.262-CUDA-11.4.1/lib/libcusparse.so.11 (0x00007f0e7161c000)
+	libcrypto.so.10 => /lib64/libcrypto.so.10 (0x00007f0e711b9000)
+	libssl.so.10 => /lib64/libssl.so.10 (0x00007f0e70f47000)
+	libstdc++.so.6 => /lib64/libstdc++.so.6 (0x00007f0e70c3f000)
+	libm.so.6 => /lib64/libm.so.6 (0x00007f0e7093d000)
+	libcilkrts.so.5 => /global/software/TeraChem/2021.09-intel-2017.8.262-CUDA-11.4.1/lib/libcilkrts.so.5 (0x00007f0e70702000)
+	libgcc_s.so.1 => /lib64/libgcc_s.so.1 (0x00007f0e704ec000)
+	libpthread.so.0 => /lib64/libpthread.so.0 (0x00007f0e702d0000)
+	libc.so.6 => /lib64/libc.so.6 (0x00007f0e6ff02000)
+	/lib64/ld-linux-x86-64.so.2 (0x00007f0ed5210000)
+	libdl.so.2 => /lib64/libdl.so.2 (0x00007f0e6fcfe000)
+	libidn.so.11 => /lib64/libidn.so.11 (0x00007f0e6facb000)
+	libssh2.so.1 => /lib64/libssh2.so.1 (0x00007f0e6f89e000)
+	libssl3.so => /lib64/libssl3.so (0x00007f0e6f641000)
+	libsmime3.so => /lib64/libsmime3.so (0x00007f0e6f419000)
+	libnss3.so => /lib64/libnss3.so (0x00007f0e6f0e5000)
+	libnssutil3.so => /lib64/libnssutil3.so (0x00007f0e6eeb5000)
+	libplds4.so => /lib64/libplds4.so (0x00007f0e6ecb1000)
+	libplc4.so => /lib64/libplc4.so (0x00007f0e6eaac000)
+	libnspr4.so => /lib64/libnspr4.so (0x00007f0e6e86e000)
+	libgssapi_krb5.so.2 => /lib64/libgssapi_krb5.so.2 (0x00007f0e6e621000)
+	libkrb5.so.3 => /lib64/libkrb5.so.3 (0x00007f0e6e338000)
+	libk5crypto.so.3 => /lib64/libk5crypto.so.3 (0x00007f0e6e105000)
+	libcom_err.so.2 => /lib64/libcom_err.so.2 (0x00007f0e6df01000)
+	liblber-2.4.so.2 => /lib64/liblber-2.4.so.2 (0x00007f0e6dcf2000)
+	libldap-2.4.so.2 => /lib64/libldap-2.4.so.2 (0x00007f0e6da9d000)
+	libz.so.1 => /lib64/libz.so.1 (0x00007f0e6d887000)
+	librt.so.1 => /lib64/librt.so.1 (0x00007f0e6d67f000)
+	libifport.so.5 => /global/software/intel/2017.8.262/compilers_and_libraries_2017.8.262/linux/compiler/lib/intel64/libifport.so.5 (0x00007f0e6d450000)
+	libifcoremt.so.5 => /global/software/intel/2017.8.262/compilers_and_libraries_2017.8.262/linux/compiler/lib/intel64/libifcoremt.so.5 (0x00007f0e6d0c0000)
+	libimf.so => /global/software/intel/2017.8.262/compilers_and_libraries_2017.8.262/linux/compiler/lib/intel64/libimf.so (0x00007f0e6cbd3000)
+	libsvml.so => /global/software/intel/2017.8.262/compilers_and_libraries_2017.8.262/linux/compiler/lib/intel64/libsvml.so (0x00007f0e6bcb5000)
+	libiomp5.so => /global/software/intel/2017.8.262/compilers_and_libraries_2017.8.262/linux/compiler/lib/intel64/libiomp5.so (0x00007f0e6b911000)
+	libintlc.so.5 => /global/software/intel/2017.8.262/compilers_and_libraries_2017.8.262/linux/compiler/lib/intel64/libintlc.so.5 (0x00007f0e6b6a5000)
+	libirng.so => /global/software/intel/2017.8.262/compilers_and_libraries_2017.8.262/linux/compiler/lib/intel64/libirng.so (0x00007f0e6b332000)
+	libcublasLt.so.11 => /global/software/CUDA/11.4.1/lib64/libcublasLt.so.11 (0x00007f0e59223000)
+	libkrb5support.so.0 => /lib64/libkrb5support.so.0 (0x00007f0e59013000)
+	libkeyutils.so.1 => /lib64/libkeyutils.so.1 (0x00007f0e58e0f000)
+	libresolv.so.2 => /lib64/libresolv.so.2 (0x00007f0e58bf5000)
+	libsasl2.so.3 => /lib64/libsasl2.so.3 (0x00007f0e589d8000)
+	libselinux.so.1 => /lib64/libselinux.so.1 (0x00007f0e587b1000)
+	libcrypt.so.1 => /lib64/libcrypt.so.1 (0x00007f0e5857a000)
+	libpcre.so.1 => /lib64/libpcre.so.1 (0x00007f0e58318000)
+	libfreebl3.so => /lib64/libfreebl3.so (0x00007f0e58115000)
+#################################################################################################
+
+Cannot find license.dat file in the TeraChem installation directory /global/software/TeraChem/2021.09-intel-2017.8.262-CUDA-11.4.1
+
+
+TRYING THE NETWORK LICENSE...
+Connecting to license server '54.208.252.40' port '8877'...
+Connected!
+Checking your license...
+Jobname: frame
+Scratch directory: ./scr.dis.top5
+Random number seed: 1487989838
+
+XYZ coordinates frame.rst7
+Amber prmtop file 3nedFH_sphere_nobox.prmtop
+QM index file region_distance_top5.qm
+Molden File Output: ./scr.dis.top5/frame.molden
+Using basis set: 6-31gss
+dmrgstart not found
+Spin multiplicity: 1
+DIIS will use up to 10 vectors.
+Condition number limit for the DIIS overlap matrix is            0
+WF convergence threshold: 1.00e-07
+Using DIIS algorithm to converge WF
+Maximum number of SCF iterations: 300
+Incremental fock with rebuild every 8 iterations
+Will switch to conventional Fock if diffuse functions are detected
+X-matrix tolerance: 1.00e-04
+PRECISION: DYNAMIC
+Density matrix purification turned off
+DFT Functional requested: wpbe
+Method: wPBE
+  wPBE exchange functional:   1.0 
+  LR Hartree-Fock exchange:   1.0 
+  Range Correction Scaling:   0.220 
+  PBE correlation functional: 1.0 
+Wavefunction: RESTRICTED
+DFT grid type: 1
+Using dynamic DFT grids.
+Initial guess generated by maximum overlap
+
+Using OpenMM. QM/MM is enabled.
+The energies and gradients will have MM components, but this will be computed by OpenMM.
+
+********************************************
+***** SINGLE POINT ENERGY CALCULATIONS *****
+********************************************
+*************WARNING***************
+Unrecognized or unnecessary keywords:
+These are being ignored.
+   min_restart no
+   (ÿ%R (ÿ%r
+   (ÿ%R (ÿ%r
+***********************************
+
+using 1 out of 1 CUDA devices
+   Device 0: Tesla V100-SXM2-32GB-LS, 32510MB, CC 7.0 -- CPU THREAD 0
+-------------------------------------------------------------------
+ CPU Memory Available: 128935.12 MegaWords 
+ GPU Memory Available: 3807.81 MegaWords 
+ Maximum recommended basis set size: 23500 basis functions
+ (limited by GPU memory)
+-------------------------------------------------------------------
+
+**************************************************************
+  Greetings, Martinez Group! You have 1000 licenses in total
+  IN USE: 17
+  AVAILABLE: 983
+**************************************************************
+
+REMARK  Using OpenMM platform CPU
+Made it passed OpenMM system construction
+Number of MM atoms: 38383
+Number of QM atoms:   130 (including 4 link atoms)
+Number of MM atoms:   38383
+
+
+
+Basis set:       6-31gss
+Total atoms:     130
+Total charge:    1
+Total electrons: 494 (247-alpha, 247-beta)
+Number electrons modeled by ECPs: 0
+Total orbitals:  1314
+Total AO shells: 590 (327 S-shells; 197 P-shells; 66 D-shells; 0 F-shells; 0 G-shells)
+Spin multiplicity: 1
+Nuclear repulsion energy (QM atoms): 11048.687006695473 a.u.
+
+Total charge from MM point charges: -1.00e
+
+
+**********************************************************
+*** WARNING! USING DEFAULT VDW PARAMETERS FOR QM ATOMS ***
+**********************************************************
+   TYPE       SIGMA       EPSILON
+     C      2.060000      0.080000
+     O      1.770000      0.152100
+     N      1.850000      0.200000
+     H      1.320000      0.022000
+     C      2.060000      0.080000
+     H      1.320000      0.022000
+     C      2.060000      0.080000
+     H      1.320000      0.022000
+     H      1.320000      0.022000
+     C      2.060000      0.080000
+     C      2.060000      0.080000
+     H      1.320000      0.022000
+     C      2.060000      0.080000
+     H      1.320000      0.022000
+     C      2.060000      0.080000
+     H      1.320000      0.022000
+     C      2.060000      0.080000
+     H      1.320000      0.022000
+     C      2.060000      0.080000
+     H      1.320000      0.022000
+     C      2.060000      0.080000
+     O      1.770000      0.152100
+     N      1.850000      0.200000
+     C      2.060000      0.080000
+     C      2.060000      0.080000
+     C      2.060000      0.080000
+     S      2.200000      0.470000
+     C      2.060000      0.080000
+     H      1.320000      0.022000
+     H      1.320000      0.022000
+     H      1.320000      0.022000
+     H      1.320000      0.022000
+     H      1.320000      0.022000
+     H      1.320000      0.022000
+     H      1.320000      0.022000
+     C      2.060000      0.080000
+     N      1.850000      0.200000
+     C      2.060000      0.080000
+     C      2.060000      0.080000
+     C      2.060000      0.080000
+     C      2.060000      0.080000
+     C      2.060000      0.080000
+     C      2.060000      0.080000
+     C      2.060000      0.080000
+     C      2.060000      0.080000
+     H      1.320000      0.022000
+     H      1.320000      0.022000
+     O      1.770000      0.152100
+     H      1.320000      0.022000
+     H      1.320000      0.022000
+     H      1.320000      0.022000
+     C      2.060000      0.080000
+     O      1.770000      0.152100
+     N      1.850000      0.200000
+     C      2.060000      0.080000
+     C      2.060000      0.080000
+     O      1.770000      0.152100
+     H      1.320000      0.022000
+     H      1.320000      0.022000
+     N      1.850000      0.200000
+     H      1.320000      0.022000
+     C      2.060000      0.080000
+     H      1.320000      0.022000
+     C      2.060000      0.080000
+     H      1.320000      0.022000
+     H      1.320000      0.022000
+     O      1.770000      0.152100
+     H      1.320000      0.022000
+     C      2.060000      0.080000
+     O      1.770000      0.152100
+     N      1.850000      0.200000
+     H      1.320000      0.022000
+     C      2.060000      0.080000
+     H      1.320000      0.022000
+     C      2.060000      0.080000
+     H      1.320000      0.022000
+     H      1.320000      0.022000
+     C      2.060000      0.080000
+     H      1.320000      0.022000
+     H      1.320000      0.022000
+     C      2.060000      0.080000
+     H      1.320000      0.022000
+     H      1.320000      0.022000
+     C      2.060000      0.080000
+     H      1.320000      0.022000
+     H      1.320000      0.022000
+     N      1.850000      0.200000
+     H      1.320000      0.022000
+     H      1.320000      0.022000
+     H      1.320000      0.022000
+     C      2.060000      0.080000
+     H      1.320000      0.022000
+     H      1.320000      0.022000
+     C      2.060000      0.080000
+     C      2.060000      0.080000
+     H      1.320000      0.022000
+     N      1.850000      0.200000
+     H      1.320000      0.022000
+     C      2.060000      0.080000
+     C      2.060000      0.080000
+     H      1.320000      0.022000
+     C      2.060000      0.080000
+     H      1.320000      0.022000
+     C      2.060000      0.080000
+     H      1.320000      0.022000
+     C      2.060000      0.080000
+     H      1.320000      0.022000
+     C      2.060000      0.080000
+     C      2.060000      0.080000
+     H      1.320000      0.022000
+     H      1.320000      0.022000
+     C      2.060000      0.080000
+     H      1.320000      0.022000
+     H      1.320000      0.022000
+     C      2.060000      0.080000
+     H      1.320000      0.022000
+     H      1.320000      0.022000
+     N      1.850000      0.200000
+     H      1.320000      0.022000
+     C      2.060000      0.080000
+     N      1.850000      0.200000
+     H      1.320000      0.022000
+     H      1.320000      0.022000
+     N      1.850000      0.200000
+     H      1.320000      0.022000
+     H      1.320000      0.022000
+     H      1.320000      0.022000
+     H      1.320000      0.022000
+     H      1.320000      0.022000
+     H      1.320000      0.022000
+Setting up the DFT grid...
+time to set the grid = 0.04 s
+DFT grid points: 124966 (961 points/atom)
+Setting up the DFT grid...
+time to set the grid = 0.12 s
+DFT grid points: 348626 (2681 points/atom)
+
+                      *** Start SCF Iterations ***
+
+ Iter     DIIS Error       Energy change      Electrons        XC Energy           Energy        Time(s)
+----------------------------------------------------------------------------------------------------------
+Skip purify step
+THRESPDP set to 1.00e+00
+                >>> SWITCHING TO GRID 1 <<<
+   1     0.2034816001   -3517.6124017193   493.9985316004  -364.3151345128   -3517.6124017193     4.30  
+                >>> SWITCHING TO GRID 0 <<<
+   2     0.2485589322      -5.1885760700   493.9896752450  -386.9642498717   -3522.8009777893     3.83  
+   3     0.2370421810      +1.4079575075   493.9980838135  -381.5262421476   -3521.3930202818     3.71  
+   4     0.1084219758      -8.8150595365   493.9937535963  -379.1590052087   -3530.2080798183     3.52  
+   5     0.1203072928      +1.1643677145   493.9935904254  -378.2500673572   -3529.0437121038     3.40  
+   6     0.0603276344      -6.8560153274   493.9920828874  -379.1729542835   -3535.8997274312     3.30  
+   7     0.0199865107      -0.4349119645   493.9925763854  -378.9825506258   -3536.3346393957     3.25  
+   8     0.0088507569      -0.0301292521   493.9920550934  -378.8704247216   -3536.3647686477     3.29  
+THRESPDP set to 1.23e-03
+   9     0.0062138637      -0.0089761164   493.9921251440  -378.9499615989   -3536.3737447641     3.67  
+  10     0.0012336177      -0.0016792294   493.9921164802  -378.9634869093   -3536.3754239935     3.08  
+                >>> SWITCHING TO GRID 1 <<<
+  11     0.0011054750      +0.0111923766   493.9990330825  -378.9478685049   -3536.3642316169     3.33  
+  12     0.0005810265      -0.0000899944   493.9990401072  -378.9537031866   -3536.3643216113     3.31  
+  13     0.0003768345      -0.0000351598   493.9990499956  -378.9543507036   -3536.3643567711     3.16  
+  14     0.0000773411      -0.0000102401   493.9990517697  -378.9559130753   -3536.3643670112     3.06  
+THRESPDP set to 6.78e-08
+  15     0.0000471232      -0.0000020036   493.9990504916  -378.9560302434   -3536.3643690148     4.92  
+  16     0.0000186548      -0.0000004210   493.9990499868  -378.9558502441   -3536.3643694357     3.39  
+  17     0.0000072743      -0.0000000876   493.9990502040  -378.9558665813   -3536.3643695233     3.10  
+  18     0.0000037212      -0.0000000167   493.9990503318  -378.9559433456   -3536.3643695401     3.10  
+  19     0.0000018575      -0.0000000035   493.9990503352  -378.9559183736   -3536.3643695435     5.00  
+  20     0.0000010538      -0.0000000007   493.9990503452  -378.9559049239   -3536.3643695442     5.18  
+  21     0.0000003358      -0.0000000002   493.9990503390  -378.9559124408   -3536.3643695445     5.04  
+  22     0.0000001223      -0.0000000000   493.9990503398  -378.9559123909   -3536.3643695445     5.02  
+  23     0.0000000507      +0.0000000000   493.9990503400  -378.9559118432   -3536.3643695445     5.06  
+----------------------------------------------------------------------------------------------------------
+FINAL ENERGY: -3536.3643695445 a.u.
+WARNING: Final energy is higher than the lowest energy by     0.011054.
+HOMO-LUMO GAP: 5.449 eV
+CENTER OF MASS: {48.247701, 47.463994, 43.162377} ANGS
+QM  DIPOLE MOMENT: {-9.881198, 3.551927, -13.521557} (|D| = 17.119777) DEBYE
+MM  DIPOLE MOMENT: {155.962355, -226.280586, 106.265606} (|D| = 294.651555) DEBYE
+TOT DIPOLE MOMENT: {146.081158, -222.728659, 92.744050} (|D| = 282.044711) DEBYE
+Writing out molden info
+
+Running Mulliken population analysis...
+
+
+  Restricted CIS Parameters
+--------------------------------------------
+Number of occupied orbitals:           247
+Number of virtual orbitals:           1067
+Number of molecular orbitals:         1314
+Number of basis functions:            1314
+Multiplicity of target state:      singlet
+
+ Generating 2nd functional diffs
+      Davidson Diagonalization Parameters
+-----------------------------------------------
+Number of roots to find:                    5
+Number of guess vectors:                    5
+Maximum subspace size:                     50
+Number of vectors to save:                  5
+Collapse vectors per root:                  2
+Number of CSFs:                        263549
+Maximum Davidson iterations:              100
+Residual convergence:                 1.0e-04
+Orthogonality tolerance:              1.0e-12
+Use incremental sigma vectors:             No
+
+  Nonsymmetric Davidson Dynamic Precision Parameters
+------------------------------------------------------
+SP Residual convergence:              1.0e-04
+Sigma vector THRESPDP:                6.8e-08
+
+Davidson memory usage: 213.03 MB
+
+Guess Vectors:
+  247 ->  248 : D -> V :     0.200234
+  246 ->  248 : D -> V :     0.221047
+  245 ->  248 : D -> V :     0.224245
+  244 ->  248 : D -> V :     0.225392
+  243 ->  248 : D -> V :     0.242386
+
+  Root           Eigenvalue       Energy Change        Residual
+-------------------------------------------------------------------
+Iteration:    0   Subspace Size:    5
+Root: 1:         0.13308690         0.13308690         0.15065064  
+Root: 2:         0.13889115         0.13889115         0.04185104  
+Root: 3:         0.14484499         0.14484499         0.02035922  
+Root: 4:         0.14667045         0.14667045         0.02128498  
+Root: 5:         0.16084292         0.16084292         0.01141427  
+
+Iteration:    1   Subspace Size:   10
+Root: 1:         0.10957058        -0.02351632         0.03987399  
+Root: 2:         0.12161984        -0.01727131         0.02179334  
+Root: 3:         0.14015548        -0.00468951         0.02515093  
+Root: 4:         0.14366007        -0.00301038         0.01619780  
+Root: 5:         0.15988775        -0.00095517         0.00382459  
+
+Iteration:    2   Subspace Size:   15
+Root: 1:         0.10706330        -0.00250728         0.02222550  
+Root: 2:         0.12042304        -0.00119680         0.01250745  
+Root: 3:         0.13866264        -0.00149284         0.01705056  
+Root: 4:         0.14306783        -0.00059224         0.01267440  
+Root: 5:         0.15967829        -0.00020946         0.01042271  
+
+Iteration:    3   Subspace Size:   20
+Root: 1:         0.10640617        -0.00065714         0.00912603  
+Root: 2:         0.12022966        -0.00019338         0.00535296  
+Root: 3:         0.13787446        -0.00078819         0.00910522  
+Root: 4:         0.14225591        -0.00081191         0.01041260  
+Root: 5:         0.15821478        -0.00146351         0.03266578  
+
+Iteration:    4   Subspace Size:   25
+Root: 1:         0.10628967        -0.00011649         0.00391230  
+Root: 2:         0.12019624        -0.00003343         0.00205846  
+Root: 3:         0.13764862        -0.00022584         0.00740221  
+Root: 4:         0.14171154        -0.00054437         0.01275166  
+Root: 5:         0.15123044        -0.00698434         0.03251275  
+
+Iteration:    5   Subspace Size:   30
+Root: 1:         0.10626734        -0.00002233         0.00182868  
+Root: 2:         0.12018772        -0.00000851         0.00146612  
+Root: 3:         0.13753362        -0.00011500         0.00420696  
+Root: 4:         0.14139490        -0.00031664         0.00669887  
+Root: 5:         0.14824070        -0.00298974         0.02826089  
+
+Iteration:    6   Subspace Size:   35
+Root: 1:         0.10626285        -0.00000449         0.00087237  
+Root: 2:         0.12018163        -0.00000609         0.00129402  
+Root: 3:         0.13749835        -0.00003527         0.00311812  
+Root: 4:         0.14131120        -0.00008370         0.00331050  
+Root: 5:         0.14600304        -0.00223766         0.02955371  
+
+Iteration:    7   Subspace Size:   40
+Root: 1:         0.10626186        -0.00000098         0.00041278  
+Root: 2:         0.12017800        -0.00000363         0.00072553  
+Root: 3:         0.13746662        -0.00003173         0.00296864  
+Root: 4:         0.14116893        -0.00014227         0.01589482  
+Root: 5:         0.14172181        -0.00428123         0.02678258  
+
+Iteration:    8   Subspace Size:   45
+Root: 1:         0.10626162        -0.00000024         0.00019830  
+Root: 2:         0.12017712        -0.00000087         0.00044859  
+Root: 3:         0.13743743        -0.00002918         0.00259333  
+Root: 4:         0.13971551        -0.00145341         0.02102808  
+Root: 5:         0.14134464        -0.00037717         0.00315508  
+
+Iteration:    9   Subspace Size:   50
+Root: 1:         0.10626156        -0.00000006         0.00011266  
+Root: 2:         0.12017664        -0.00000048         0.00029505  
+Root: 3:         0.13740821        -0.00002922         0.00417273  
+Root: 4:         0.13822612        -0.00148940         0.01897236  
+Root: 5:         0.14132734        -0.00001730         0.00155461  
+Collapsing subspace to 10 vectors
+
+Iteration:   10   Subspace Size:   10
+Root: 1:         0.10626156        -0.00000000         0.00011266  
+Root: 2:         0.12017664         0.00000000         0.00029505  
+Root: 3:         0.13740821         0.00000000         0.00417273  
+Root: 4:         0.13822612        -0.00000000         0.01897236  
+Root: 5:         0.14132734         0.00000000         0.00155461  
+
+Iteration:   11   Subspace Size:   15
+Root: 1:         0.10626155        -0.00000001         0.00004957  Converged
+Root: 2:         0.12017650        -0.00000013         0.00016573  
+Root: 3:         0.13730910        -0.00009911         0.00815632  
+Root: 4:         0.13763568        -0.00059044         0.01016385  
+Root: 5:         0.14132324        -0.00000411         0.00097854  
+
+Iteration:   12   Subspace Size:   19
+Root: 1:         0.10626154        -0.00000000         0.00003703  Converged
+Root: 2:         0.12017645        -0.00000005         0.00010786  
+Root: 3:         0.13705337        -0.00025574         0.00910060  
+Root: 4:         0.13750057        -0.00013511         0.00390592  
+Root: 5:         0.14132089        -0.00000234         0.00078394  
+
+Iteration:   13   Subspace Size:   23
+Root: 1:         0.10626154        -0.00000000         0.00003170  Converged
+Root: 2:         0.12017643        -0.00000002         0.00005613  Converged
+Root: 3:         0.13685093        -0.00020244         0.00625803  
+Root: 4:         0.13747478        -0.00002579         0.00183903  
+Root: 5:         0.14131933        -0.00000156         0.00056295  
+
+Iteration:   14   Subspace Size:   26
+Root: 1:         0.10626154        -0.00000000         0.00002891  Converged
+Root: 2:         0.12017642        -0.00000000         0.00002716  Converged
+Root: 3:         0.13678388        -0.00006704         0.00361461  
+Root: 4:         0.13746933        -0.00000546         0.00098205  
+Root: 5:         0.14131875        -0.00000058         0.00034449  
+
+Iteration:   15   Subspace Size:   29
+Root: 1:         0.10626154        -0.00000000         0.00002685  Converged
+Root: 2:         0.12017642        -0.00000000         0.00001178  Converged
+Root: 3:         0.13676373        -0.00002016         0.00162653  
+Root: 4:         0.13746773        -0.00000160         0.00046150  
+Root: 5:         0.14131856        -0.00000019         0.00016129  
+
+Iteration:   16   Subspace Size:   32
+Root: 1:         0.10626154        -0.00000000         0.00002613  Converged
+Root: 2:         0.12017642        -0.00000000         0.00000816  Converged
+Root: 3:         0.13675938        -0.00000435         0.00092880  
+Root: 4:         0.13746736        -0.00000037         0.00028416  
+Root: 5:         0.14131851        -0.00000005         0.00009933  Converged
+
+Iteration:   17   Subspace Size:   34
+Root: 1:         0.10626154        -0.00000000         0.00002593  Converged
+Root: 2:         0.12017642        -0.00000000         0.00000763  Converged
+Root: 3:         0.13675779        -0.00000159         0.00057036  
+Root: 4:         0.13746722        -0.00000015         0.00017039  
+Root: 5:         0.14131850        -0.00000002         0.00006635  Converged
+
+Iteration:   18   Subspace Size:   36
+Root: 1:         0.10626154        -0.00000000         0.00002565  Converged
+Root: 2:         0.12017642        -0.00000000         0.00000749  Converged
+Root: 3:         0.13675726        -0.00000053         0.00032755  
+Root: 4:         0.13746717        -0.00000005         0.00009698  Converged
+Root: 5:         0.14131849        -0.00000001         0.00004419  Converged
+
+Iteration:   19   Subspace Size:   37
+Root: 1:         0.10626154        -0.00000000         0.00002550  Converged
+Root: 2:         0.12017642        -0.00000000         0.00000749  Converged
+Root: 3:         0.13675707        -0.00000019         0.00017188  
+Root: 4:         0.13746716        -0.00000002         0.00005217  Converged
+Root: 5:         0.14131849        -0.00000000         0.00003061  Converged
+
+Iteration:   20   Subspace Size:   38
+Root: 1:         0.10626154        -0.00000000         0.00002540  Converged
+Root: 2:         0.12017642        -0.00000000         0.00000749  Converged
+Root: 3:         0.13675702        -0.00000005         0.00009221  Converged
+Root: 4:         0.13746715        -0.00000000         0.00003652  Converged
+Root: 5:         0.14131849        -0.00000000         0.00002370  Converged
+
+Davidson has converged in single precision
+Collapsing subspace to 5 vectors
+Rebuilding sigma vectors in mixed precision
+
+Iteration:   21   Subspace Size:    5
+Root: 1:         0.10626154        -0.00000000         0.00002540  Converged
+Root: 2:         0.12017642         0.00000000         0.00000749  Converged
+Root: 3:         0.13675702        -0.00000000         0.00009221  Converged
+Root: 4:         0.13746715         0.00000000         0.00003652  Converged
+Root: 5:         0.14131849        -0.00000000         0.00002370  Converged
+
+Davidson converged in 21 iterations
+83 sigma vectors were formed
+78 sigma vectors were formed in single precision
+5 sigma vectors were formed in mixed precision
+
+  Root   Total Energy (a.u.)   Ex. Energy (a.u.)     Ex. Energy (eV)     Ex. Energy (nm)
+-----------------------------------------------------------------------------------------
+     1      -3536.25810800          0.10626154          2.89152321        428.78514799
+     2      -3536.24419312          0.12017642          3.27016631        379.13735504
+     3      -3536.22761252          0.13675702          3.72134725        333.17025359
+     4      -3536.22690239          0.13746715          3.74067097        331.44914844
+     5      -3536.22305106          0.14131849          3.84547102        322.41621433
+
+Unrelaxed excited state dipole moments:
+
+  Root       Dx         Dy         Dz         |D|  (Debye)
+------------------------------------------------------------
+     1    -8.1638     6.6779   -17.8547    20.7372
+     2     1.2656    15.3788   -12.1339    19.6301
+     3   -15.3526     0.6308   -14.9330    21.4265
+     4   -30.3019     6.1195   -14.5412    34.1628
+     5   -33.8248    10.5695   -12.2847    37.5066
+
+Transition dipole moments:
+
+  Root       Tx         Ty         Tz         |T| (a.u.)
+----------------------------------------------------------
+     1     2.7532     3.0109    -0.8337     4.1642
+     2     0.0074     0.0300     0.0019     0.0309
+     3     0.3153     0.1266    -0.0233     0.3406
+     4    -0.2076    -0.1655     0.0317     0.2674
+     5    -0.1656    -0.2305     0.0682     0.2919
+
+Transition dipole moments between excited states:
+
+    Transition       Tx         Ty         Tz         |T| (a.u.)
+------------------------------------------------------------------
+     1 ->    2    -0.0614    -0.0480    -0.0420     0.0886
+     1 ->    3     0.2290     0.2300     0.0601     0.3301
+     1 ->    4    -0.4496    -0.5432    -0.0629     0.7080
+     1 ->    5    -0.6775    -0.3329    -0.0817     0.7593
+     2 ->    3     0.7269     0.6848     0.1118     1.0049
+     2 ->    4     0.1511     0.1742     0.0344     0.2332
+     2 ->    5    -0.0437    -0.0093    -0.0054     0.0450
+     3 ->    4     1.4376    -0.6111    -0.2295     1.5788
+     3 ->    5     0.0036    -0.0469     0.0946     0.1057
+     4 ->    5     0.7054    -0.5123    -0.2245     0.9002
+
+Velocity transition dipole moments:
+
+  Root       Tx         Ty         Tz         |T| (a.u.)
+----------------------------------------------------------
+     1     0.0272    -0.0446     0.0890     0.1032
+     2    -0.0015     0.0017     0.0023     0.0033
+     3     0.0116    -0.0274     0.0018     0.0298
+     4     0.0235     0.0043     0.0044     0.0243
+     5     0.0160     0.0136    -0.0052     0.0217
+
+Magnetic transition dipole moments and rotational strengths:
+
+  Root       Lx         Ly         Lz       R(len)     R(vel) (a.u.)
+--------------------------------------------------------------------
+     1     0.3877    -0.1388    -0.5388    -1.0988    -0.2936
+     2     0.4051     0.2454     0.0586    -0.0105    -0.0005
+     3     0.1934     0.0886     0.1721    -0.0682     0.0010
+     4    -0.0135     0.0398     0.0857     0.0011     0.0017
+     5     0.0091    -0.0563    -0.0427    -0.0086    -0.0028
+
+
+Electric transition quadrupole moments (Cartesian):
+
+   Root       Qxy        Qxz        Qyz        Qxx        Qyy        Qzz       norm (a.u.)
+--------------------------------------------------------------------------------------------
+     1    27.9185    -1.4866     1.6414    22.7095    22.9561   -11.3186    44.2172
+     2     0.0299     0.0573     0.3169     0.0819     0.1927    -0.1717     0.4218
+     3     2.7439    -0.0310    -0.1663     2.5379     2.3329    -1.2674     4.5878
+     4    -2.1544     0.1877     0.0179    -1.1347    -2.1433    -0.1652     3.2535
+     5    -2.7656     0.3468    -0.2278    -2.6086    -2.5752     0.6714     4.6592
+
+Root 1: Largest CI coefficients:
+  247 ->  248 : D -> V :   0.953237
+  242 ->  248 : D -> V :  -0.127930
+
+Root 2: Largest CI coefficients:
+  243 ->  248 : D -> V :  -0.890055
+  243 ->  249 : D -> V :   0.349944
+  243 ->  261 : D -> V :   0.225822
+
+Root 3: Largest CI coefficients:
+  237 ->  248 : D -> V :   0.779812
+  236 ->  248 : D -> V :  -0.247928
+  238 ->  248 : D -> V :  -0.244660
+  236 ->  249 : D -> V :   0.203794
+  244 ->  248 : D -> V :   0.202734
+  222 ->  248 : D -> V :   0.146278
+  242 ->  248 : D -> V :   0.146111
+  224 ->  248 : D -> V :  -0.114273
+  239 ->  249 : D -> V :   0.109003
+  239 ->  248 : D -> V :   0.106777
+
+Root 4: Largest CI coefficients:
+  244 ->  248 : D -> V :  -0.791616
+  242 ->  248 : D -> V :  -0.254568
+  239 ->  248 : D -> V :  -0.232258
+  244 ->  249 : D -> V :  -0.223540
+  237 ->  248 : D -> V :   0.211121
+  238 ->  248 : D -> V :  -0.189205
+  246 ->  248 : D -> V :   0.183801
+  245 ->  248 : D -> V :   0.127567
+  236 ->  248 : D -> V :  -0.102340
+
+Root 5: Largest CI coefficients:
+  246 ->  248 : D -> V :  -0.854234
+  242 ->  248 : D -> V :  -0.329818
+  241 ->  248 : D -> V :  -0.248733
+  241 ->  249 : D -> V :  -0.188083
+  246 ->  249 : D -> V :  -0.148124
+  242 ->  249 : D -> V :  -0.102803
+
+  Final Excited State Results:
+
+  Root   Total Energy (a.u.)   Ex. Energy (eV)   Osc. (a.u.)   < S^2 >   Max CI Coeff.      Excitation
+------------------------------------------------------------------------------------------------------------
+     1       -3536.25810800        2.89152321       1.2284      0.0000      0.953237     247 ->  248 : D -> V
+     2       -3536.24419312        3.27016631       0.0001      0.0000     -0.890055     243 ->  248 : D -> V
+     3       -3536.22761252        3.72134725       0.0106      0.0000      0.779812     237 ->  248 : D -> V
+     4       -3536.22690239        3.74067097       0.0066      0.0000     -0.791616     244 ->  248 : D -> V
+     5       -3536.22305106        3.84547102       0.0080      0.0000     -0.854234     246 ->  248 : D -> V
+
+        0.00817877644307         0.01173443574527        -0.00278686061679
+        0.00976067302562         0.01173791221950        -0.00236753001968
+        0.00399772143578         0.00758821198189        -0.00409446128143
+        0.00071420623746         0.00700337449143        -0.00300693778790
+        0.00135651458792         0.00505323490854        -0.00125754792095
+        0.00018490265591         0.00360602541047         0.00414484088184
+       -0.00135300836979         0.00294184470293        -0.00524552782097
+       -0.00228033651033         0.00304530996219        -0.00788546254135
+       -0.00204736200374         0.00205986068021        -0.00634234884257
+       -0.00055850645009         0.00256448396892        -0.00524512991609
+       -0.00018174607136        -0.00047852044645        -0.00979926953039
+       -0.00541324586050        -0.00490673000771        -0.01781781749851
+        0.00011672735512         0.00223387340260        -0.00838793414053
+       -0.00388661342714         0.00055617781202        -0.00891106690526
+        0.00188034444332         0.00287447343399        -0.00366739398110
+        0.00424199815159         0.00212793503008        -0.00068322207502
+        0.00023725696736         0.00337815820909        -0.00290367229747
+        0.00017752157933         0.00348800037619        -0.00170918450107
+       -0.00162254431368         0.00317105562276        -0.00337532392076
+       -0.00534431424991         0.00319256013420        -0.00364017443411
+        0.00133275214308         0.00706112113786        -0.00107616854180
+       -0.00158371157573         0.00692642097820        -0.00128263745059
+        0.00365024898241         0.00969182401479        -0.00353237789515
+        0.00184776121965         0.00871357046470        -0.00606720411733
+       -0.00128046048701         0.00784612172907        -0.00892873169881
+       -0.00304436497489         0.00327746887733        -0.01536962785468
+       -0.01206779366966         0.01064376060442        -0.01426894529614
+       -0.01009429586563         0.00452032377431        -0.00754790972069
+       -0.00803433587047         0.00088007989211        -0.00587385939818
+       -0.00802147937621         0.00350069580068        -0.00472817195358
+       -0.01106678921265         0.00649746191567        -0.00994029221557
+        0.00260488574677         0.00223798008094        -0.01961825831620
+       -0.00113998938878        -0.00321615183323        -0.01244348803897
+        0.00028634926140         0.01337501961304        -0.01344383509808
+       -0.00464355206279         0.00704248101475        -0.00637776071678
+        0.00179562492534         0.00960179221122        -0.00598103146917
+       -0.00559402585977         0.01277740389264        -0.00340638218498
+       -0.00426671255407         0.00310905975267        -0.00200921332329
+       -0.01129117967284        -0.00055107431390         0.00018816172353
+       -0.01590581943133         0.00115239769736         0.00050664142809
+       -0.01276970303411        -0.00175053731101        -0.00300899759800
+       -0.01414868288008        -0.00703873091480        -0.00532108253422
+       -0.01816226020312        -0.01380393420876        -0.00030698830182
+       -0.02224863176782        -0.00507635333427         0.00112885197422
+       -0.02314208065664         0.00212382247654         0.00189016742737
+       -0.02931656350598         0.01099955978792         0.00059894545586
+       -0.02258150557521        -0.00327813534010         0.00084355702026
+       -0.02031039755707        -0.01677214707475         0.00104769819160
+       -0.01182289139299        -0.00856112733649        -0.00786815068210
+       -0.00882633922117        -0.00070412845590        -0.00455228036530
+       -0.00784268900780        -0.00432416158323         0.00154129656816
+        0.00502655324518         0.00176531962535        -0.00202413365336
+        0.00499595645556         0.00226585071962         0.00048270471112
+        0.00449881485462         0.00703867528412        -0.00477587659379
+       -0.00001657915522         0.00717577324037        -0.00453802232973
+       -0.00426394557851         0.00021855043466        -0.00431856435992
+       -0.00166674256454        -0.00591459502035         0.00174440376611
+        0.00236093825690         0.00615298720636        -0.00066766970207
+        0.00080565109027         0.01186180444180        -0.01001659243978
+       -0.00231745338751         0.00372553846103        -0.00680701357388
+       -0.00077120128586         0.00869798571341        -0.00529086555067
+        0.00027245226914        -0.00152181608657        -0.00546023693719
+       -0.00115193713048        -0.00457548507561        -0.00451449402460
+        0.00001806567937        -0.00019131800108        -0.00148119094027
+        0.00355504236556        -0.00207900079185        -0.00190421620972
+       -0.00277533260860         0.00352638297696        -0.00227545742724
+       -0.00268356327725        -0.00576022298422         0.00563955442049
+        0.00478676704462         0.01108096807894         0.03820555511177
+        0.00779790461441        -0.00067200490169        -0.00852529410267
+        0.01212239702845        -0.00432755018649        -0.00699875572227
+        0.00351092143085         0.00894473538926        -0.00855741053356
+        0.00398560245419         0.00552774528991        -0.00170792205861
+       -0.01723413544808         0.02063506959503        -0.00859817865918
+       -0.00874663497291         0.00694209030853        -0.01462656265633
+       -0.00549537353557         0.00955021135336         0.00526058918816
+        0.00007023901625         0.01207450493099         0.00563038210145
+       -0.00849428137055         0.00264793318194         0.01172954972838
+        0.00232524550511         0.00468128241928         0.00142611533071
+        0.00380916795429         0.00593937167404         0.00073050536938
+        0.00467594384092         0.00201619865579        -0.00235948344406
+        0.00482928972879         0.00274745536780         0.00610189856595
+        0.00313087828479        -0.00229992736808         0.00662313403318
+        0.01100510792561         0.00665957163836         0.00496134027887
+       -0.00031315153022         0.00224642824888         0.01013558863901
+       -0.00085377299301         0.00443974935911         0.00604776088242
+       -0.00254841927383        -0.00230397360568         0.00457741843292
+       -0.00886426459890         0.00430615636535         0.02423908897431
+       -0.00943126383254         0.02313068422804         0.03441926660463
+       -0.01286065000211         0.00317400520426         0.05714312114127
+       -0.01753068537976         0.00105219682908         0.01483462641350
+        0.00039114944459         0.00953136005837         0.00749875436934
+        0.00391134313523         0.01381942576009         0.00063831929108
+        0.00434899916315        -0.00221073432445         0.00386541971112
+        0.00373191237840         0.00566152864536         0.00610721370970
+        0.00215721079799         0.00393662322184         0.00859827463222
+        0.00116130878792         0.00213370019682         0.01281130010197
+       -0.00073893139713         0.00749681669290         0.00960564231075
+       -0.00899268409597         0.00688980908289         0.02414028776352
+        0.00304913128203         0.00929332934280         0.00323019243495
+        0.00552050995339         0.01097844956434         0.00000647863243
+        0.00347861188379         0.01303011140002        -0.00180025211942
+        0.00911639640209         0.01103555983555         0.00080493872888
+        0.01271817850313         0.01521085918149        -0.00081627833381
+        0.00676806983055         0.00797265956467         0.00199776942127
+        0.00471382512367         0.00425530926014         0.00000543820706
+        0.00543971727444         0.00656983476647         0.00373755427597
+        0.00519779513925         0.00688621095539         0.00503713427416
+        0.00479236450990         0.00745800269940         0.00410693006495
+       -0.00702720018935         0.00923745437500         0.02097930675806
+       -0.00234842678243         0.00932252202445         0.01182201264212
+       -0.00723964672385        -0.00346936031828         0.01526118720240
+       -0.00170724154947         0.01287632153010         0.01156220538231
+        0.00292335780019         0.01128964367363         0.01129696229873
+       -0.00402502421799         0.01474492846909         0.00330888127737
+       -0.00529922534864         0.00546757276305         0.00966080724250
+       -0.00185500336373         0.00438788240734         0.01646541664339
+       -0.00874212207622         0.00219081712670         0.00582675348011
+       -0.00590845608826         0.00734049561858         0.00256775213937
+       -0.01546843912484         0.01552553943089        -0.00907800239024
+       -0.00146637000715         0.00242967378021         0.00419326175371
+        0.00473446897153        -0.00353790033861         0.01326688214522
+        0.01855003074639        -0.01443367654494         0.01728892369953
+        0.01234434263385        -0.00743065936889         0.02417930440036
+       -0.00305644700823         0.00404504389956        -0.00151605666652
+       -0.00431110156768         0.00409098797445        -0.00812573156555
+       -0.00179429376986         0.00516577694229        -0.00136282311184
+        0.01991294692402         0.01933932799654         0.00442241290596
+       -0.05295888724636         0.05595645063367        -0.02135838869152
+       -0.02508988445680         0.01401900156525         0.02795318519432
+       -0.03697790772500         0.00681254319859         0.04014345942741
+Total processing time: 569.50 sec 
+
+ Job finished: Wed Nov 16 14:29:04 2022
+
