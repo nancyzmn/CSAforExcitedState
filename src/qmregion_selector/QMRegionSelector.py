@@ -28,6 +28,8 @@ class QMRegionSelector:
         self.chromophore_atoms = parse_int_list_file(self.cfg["chromophore_atoms_file"])
         self.ground_charges: Dict[Path, ChargeSet] = {}
         self.excited_charges: Dict[Path, ChargeSet] = {}
+        self.bright_states: Dict[Path, ExcitedState] = {}
+        self.charge_shift: Optional[pd.DataFrame] = None
         self.validate()
     
     def read_config_json(self, path: str) -> Dict[str, Any]:
@@ -247,6 +249,8 @@ class QMRegionSelector:
         2) Parses the TDDFT “roots table” to obtain oscillator strengths up to `self.cfg["root-max"]`
         3) Filters roots whose oscillator strength is >= `self.cfg["osc-threshold"]` and
         selects the N-th brightest root, where N = `self.cfg["bright-index"]` (1-based).
+        If fewer than N roots clear the threshold, that frame is skipped (warning
+        printed) and processing continues with the remaining frames.
         4) Parse the charges of this root
 
         Output:
@@ -254,6 +258,10 @@ class QMRegionSelector:
 
         Sets:
             `self.excited_charges`: Dict[Path, ChargeSet] mapping each frame directory to its parsed excited-state charges.
+            `self.bright_states`: Dict[Path, ExcitedState] mapping each frame directory to the
+                selected bright state (root, excitation energy, oscillator strength) — this is
+                the reference-region spectrum a `QMConvergenceStudy` CSA-threshold scan compares
+                candidate regions against, with no extra parsing or QM calculation required.
         """
         for d in self.frame_dirs:
             tddft_path = d / self.cfg["tddft_output_name"]
@@ -268,9 +276,11 @@ class QMRegionSelector:
                 continue
             bright_state = select_bright_state(states, self.cfg["osc-threshold"], self.cfg["bright-index"])
             if bright_state is None:
-                return None
+                print(f"[WARN] No root meets osc-threshold in {d.name}; skipping.")
+                continue
             bright_root = bright_state.root
             print(f"Bright state: Root {bright_root}")
+            self.bright_states[d] = bright_state
 
             excited_dst = d / self.cfg['out-excited']
             charge_set = self.adapter.parse_excited_charges(
