@@ -11,4 +11,18 @@ def __getattr__(name):
         # the submodule instead of the class.
         globals()["QMRegionSelector"] = _QMRegionSelector
         return _QMRegionSelector
+    if name == "QMConvergenceStudy":
+        # Same deferral as QMRegionSelector above: QMConvergenceStudy.py
+        # imports QMRegionSelector, which needs MDAnalysis.
+        from .QMConvergenceStudy import QMConvergenceStudy as _QMConvergenceStudy
+        # That import transitively imports QMRegionSelector.py, which (as an
+        # unavoidable side effect of Python's import system) binds the
+        # submodule onto this package's namespace — the same shadowing
+        # problem described above, but for "QMRegionSelector" this time, and
+        # it happens whether or not the "QMRegionSelector" branch above has
+        # already run. Fix it up here too.
+        from .QMRegionSelector import QMRegionSelector as _QMRegionSelector
+        globals()["QMRegionSelector"] = _QMRegionSelector
+        globals()["QMConvergenceStudy"] = _QMConvergenceStudy
+        return _QMConvergenceStudy
     raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
