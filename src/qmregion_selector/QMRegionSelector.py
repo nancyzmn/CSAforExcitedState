@@ -1,22 +1,23 @@
 import json
 from pathlib import Path
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional, Tuple
 import numpy as np
 import pandas as pd
 
-from .qm_utils import get_qm_idx
+from .qm_utils import get_qm_idx, load_universe
 from .io_utils import find_frame_dirs
 from .parse_utils import parse_int_list_file
-from .schema import ChargeSet
+from .schema import ChargeSet, ExcitedState
 from .adapters import get_adapter
 from .selection import select_bright_state
+from .convergence import resolve_scan
 
 try:
-    import pytraj as pt
+    from MDAnalysis.analysis.distances import distance_array
 except ImportError as e:
     raise SystemExit(
-        "pytraj is required but not found.\n"
-        "If you're on a cluster, try: module load AMBER\n"
+        "MDAnalysis is required but not found.\n"
+        "Install it with: pip install MDAnalysis\n"
         "Then re-run this command."
     ) from e
 
