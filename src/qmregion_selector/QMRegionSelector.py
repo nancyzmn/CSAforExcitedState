@@ -59,18 +59,20 @@ class QMRegionSelector:
         
         Validation rules enforced:
         - `chromophore_resid` must be >= 1.
-        - `dist-threshold` must be > 0.
+        - `dist-threshold` must be > 0. May be a single value or a list of
+          values to scan (see `QMConvergenceStudy`); every value is checked.
         - `bright-index` must be > 0.
         - `osc-threshold` must be within [0, 1].
         - `root-max` must be >= `bright-index`.
-        - `score-threshold` must be within [0, 1].
+        - `score-threshold` must be within [0, 1]. May be a single value or a
+          list of values to scan; every value is checked.
         - `es_code` (default `"terachem"`) must name a registered ES-code adapter.
         - If `resid_last_index` < `chromophore_resid`, a warning is printed (the
         chromophore can still be considered if selected).
 
         Sets the following instance attributes:
         - `self.frame_dirs`: frame directories in `dir_root`
-        - `self.first_frame_path`: path to a geometry that pytraj needs for residue definition
+        - `self.first_frame_path`: path to a geometry that MDAnalysis needs for residue definition
         - `self.adapter`: the `ElectronicStructureAdapter` named by `es_code`
         - `self.charge_scheme`: charge scheme (default `"vdd"`) passed to the adapter
 
@@ -81,21 +83,23 @@ class QMRegionSelector:
         """
         if self.cfg["chromophore_resid"] < 1:
             raise SystemExit("Chromophore residue must be >= 1.")
-        
-        if self.cfg["dist-threshold"] < 0:
-            raise SystemExit("Distance threshold to choose QM region must be > 0.")
-        
+
+        dist_thresholds, _ = resolve_scan(self.cfg["dist-threshold"])
+        if any(t < 0 for t in dist_thresholds):
+            raise SystemExit("Distance threshold(s) to choose QM region must be > 0.")
+
         if self.cfg["bright-index"] < 0:
             raise SystemExit("The brightest excited state to choose must be > 0.")
-        
+
         if self.cfg["osc-threshold"] < 0 or self.cfg["osc-threshold"] > 1:
             raise SystemExit("The oscillator strength threshold must be between 0 and 1")
-        
+
         if self.cfg["root-max"] < self.cfg["bright-index"]:
             raise SystemExit("The highest excited state considered must be larger than the brightest excited state to choose")
-        
-        if self.cfg["score-threshold"] < 0 or self.cfg["score-threshold"] > 1:
-            raise SystemExit("The CSA score threshold must be between 0 and 1")
+
+        score_thresholds, _ = resolve_scan(self.cfg["score-threshold"])
+        if any(t < 0 or t > 1 for t in score_thresholds):
+            raise SystemExit("The CSA score threshold(s) must be between 0 and 1")
 
         es_code = self.cfg.get("es_code", "terachem")
         try:
@@ -163,26 +167,43 @@ class QMRegionSelector:
                 mean_dists[r] = float(a.mean())
         return mean_dists
     
-    def getRefQM(self) -> None:
+    def getRefQM(
+        self,
+        dist_threshold: Optional[float] = None,
+        mean_dists: Optional[Dict[int, float]] = None,
+    ) -> None:
         """
         Compute the mean minimum distance from each residue to the chromophore across
         frames (via `compute_residue_mean_mindist()`), then selects all residues whose mean distance
-        is within the configured cutoff `self.cfg["dist-threshold"]` (in Å). The chromophore residue
-        `self.cfg["chromophore_resid"]` is always included in the selected residue list.
-        
+        is within the cutoff `dist_threshold` (in Å; defaults to `self.cfg["dist-threshold"]`,
+        which must then be a single value — pass an explicit `dist_threshold` to resolve
+        one region out of a configured scan list, or use `QMConvergenceStudy` to scan it).
+        The chromophore residue `self.cfg["chromophore_resid"]` is always included in the
+        selected residue list.
+
+        `mean_dists` can be passed in to reuse an already-computed distance map (e.g. when
+        called repeatedly for a threshold scan) instead of recomputing it via MDAnalysis each time.
+
         Given the selected residues, it calls `get_qm_idx(...)` to obtain the corresponding QM atom
         indices from the provided topology (`self.cfg["topfile"]`) and a reference structure
         (`self.first_frame_path`). The QM region always contains the chromophore atoms set by `chromophore_atoms_file`
-        
+
         Sets the following instance attributes:
         - `self.qm_ref_residues`: sorted list of selected residue indices (including the chromophore residue index).
         - `self.qm_ref_atoms`: sorted list of QM atom indices for the reference QM region (including the chromophore atoms).
         """
-        
-        mean_dists = self.compute_residue_mean_mindist()
-        threshold = self.cfg["dist-threshold"]
-        selected_residues = sorted([r for r, md in mean_dists.items() if md <= threshold])
-        
+        if dist_threshold is None:
+            dist_threshold = self.cfg["dist-threshold"]
+            if isinstance(dist_threshold, (list, tuple)):
+                raise ValueError(
+                    "dist-threshold is a list; pass an explicit dist_threshold to "
+                    "resolve a single reference region, or use QMConvergenceStudy to scan it."
+                )
+
+        if mean_dists is None:
+            mean_dists = self.compute_residue_mean_mindist()
+        selected_residues = sorted([r for r, md in mean_dists.items() if md <= dist_threshold])
+
         if self.cfg["chromophore_resid"] not in selected_residues:
             selected_residues.append(self.cfg["chromophore_resid"])
 
@@ -408,17 +429,33 @@ class QMRegionSelector:
         summary.to_csv(summary_out, index=False)
         print(f"[OK] Wrote per-residue summary → {summary_out}")
     
-    def getCSARegion(self) -> None:
+    def compute_csa_selection(self, score_threshold: Optional[float] = None) -> Tuple[pd.DataFrame, List[int]]:
         """
-        This method uses the per-frame, per-residue charge shifts (Δ = excited − ground) stored
-        in `self.charge_shift` to score residues and select a “CSA region” according to a
-        normalized charge-shift criterion.
+        Score residues by normalized LOO charge shift and select those meeting `score_threshold`
+        (defaults to `self.cfg["score-threshold"]`, which must then be a single value — pass an
+        explicit `score_threshold` to resolve one selection out of a configured scan list, or use
+        `QMConvergenceStudy` to scan it). Uses `self.charge_shift` (computed via
+        `getChargeShiftPerResidue()` if not already set), i.e. the charge shifts from the
+        reference QM region — scanning `score_threshold` does not require recomputing charges.
 
-        Output:
-            Write three output files: CSA score of all residues, selected residues by CSA, and selected QM atom indices by CSA.
+        Returns
+        -------
+        Tuple[pd.DataFrame, List[int]]
+            Per-residue score table (mean/std/count of normalized |Δ|, plus a `chosen` column),
+            and the selected residue list with the chromophore appended last (matching the
+            `residue_list.txt` file convention), not otherwise sorted/deduplicated.
         """
+        threshold = score_threshold
+        if threshold is None:
+            threshold = self.cfg["score-threshold"]
+            if isinstance(threshold, (list, tuple)):
+                raise ValueError(
+                    "score-threshold is a list; pass an explicit score_threshold to "
+                    "resolve a single CSA region, or use QMConvergenceStudy to scan it."
+                )
+
         if self.charge_shift is None:
-            self.charge_shift = self.getChargeShiftPerResidue()
+            self.getChargeShiftPerResidue()
         df = self.charge_shift.copy()
         df["abs_delta"] = df["delta"].abs()
 
@@ -426,7 +463,7 @@ class QMRegionSelector:
         frame_max = (
             df.groupby("frame", observed=True)["abs_delta"].max().rename("frame_max_nonchrom")
         )
-        
+
         df = df.merge(frame_max, on="frame", how="left")
         df["denom"] = df["frame_max_nonchrom"].clip(lower=1e-12)
         df["norm_abs_delta"] = df["abs_delta"] / df["denom"]
@@ -439,22 +476,34 @@ class QMRegionSelector:
                                     "std": "std_norm_abs_delta",
                                     "count": "n_frames_used"}))
         # Selection (exclude chrom from thresholding; append it later)
-        chosen_mask = (score["mean_norm_abs_delta"] >= self.cfg["score-threshold"])
+        chosen_mask = (score["mean_norm_abs_delta"] >= threshold)
         score["chosen"] = chosen_mask
+
+        selected = score.loc[score["chosen"], "resid"].astype(int).tolist()
+        selected.append(int(self.cfg["chromophore_resid"]))
+        return score, selected
+
+    def getCSARegion(self) -> None:
+        """
+        Score residues and select a "CSA region" using `self.cfg["score-threshold"]` (must be a
+        single value; use `QMConvergenceStudy` to scan a list of thresholds instead), via
+        `compute_csa_selection()`.
+
+        Output:
+            Write three output files: CSA score of all residues, selected residues by CSA, and selected QM atom indices by CSA.
+        """
+        score, selected = self.compute_csa_selection()
 
         out_score = self.cfg["out-csa-score"]
         score.to_csv(out_score, index=False)
         print(f"[OK] Wrote score summary → {out_score}")
 
-        selected = score.loc[score["chosen"], "resid"].astype(int).tolist()
-        selected.append(int(self.cfg["chromophore_resid"]))
-
         np.savetxt(self.cfg["out-selected-residues"], np.array(selected, dtype=int), fmt="%d")
         print(f"[OK] Wrote selected residues → {self.cfg['out-selected-residues']}")
 
-        csa_qmregion = sorted(set(get_qm_idx(selected, 
-                                    str(self.cfg["topfile"]), 
-                                    str(self.first_frame_path), 
+        csa_qmregion = sorted(set(get_qm_idx(selected,
+                                    str(self.cfg["topfile"]),
+                                    str(self.first_frame_path),
                                     self.cfg["chromophore_resid"])) | set(self.chromophore_atoms))
         np.savetxt(self.cfg["out-selected-qmregion"], np.array(np.unique(csa_qmregion), dtype=int), fmt="%d")
         print(f"[OK] Wrote selected QM region by CSA → {self.cfg['out-selected-qmregion']}")
