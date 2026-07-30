@@ -33,6 +33,92 @@ returning the code-agnostic `ChargeSet`/`ExcitedState` types from
 `qmregion_selector.schema`, and registering it with `@register_adapter`.
 Select which adapter to use via the `es_code` config key (see below).
 
+### 3) QM-region convergence study
+`dist-threshold` (step 1) and `score-threshold` (step 2) each normally take a
+single number. Give either one a **list** instead, and
+`qmregion_selector.QMConvergenceStudy` will scan it: it writes one candidate
+QM region per value (for you to run through your ES code, same as any other
+region), then parses the results and reports where the tracked bright state
+stabilizes as the region grows.
+
+The two scans answer different questions, so their convergence is judged
+against different comparison targets:
+- **Distance-threshold scan** (run before CSA, to pick the reference
+  region): each value is compared to the *next* threshold in the list —
+  "does growing the region further still change anything?" Candidate
+  regions are written to `<frame_dir>/shell_<value>/`.
+- **CSA-threshold scan** (run after CSA, to pick the refined region): each
+  value is compared to the *reference region's own spectrum* (already
+  available for free from the reference-region calculation your CSA run
+  already required — no extra QM calculation needed for the reference side)
+  — "does this smaller region still reproduce the reference?" Candidate
+  regions are written to `<frame_dir>/csa_<value>/`.
+
+What "converged" means also depends on whether you scanned one geometry or
+an ensemble:
+- **Single geometry**: compare that one frame's raw excitation energy
+  directly to the comparison target (tolerance `energy-tol-eV`).
+- **Ensemble** (multiple frames, typically ~20): every frame's (excitation
+  energy, oscillator strength) pair for a given value is combined into a
+  Gaussian-broadened absorption spectrum, which is then compared to the
+  comparison target's spectrum on two axes — the shift in the spectrum's
+  peak position (tolerance `energy-tol-eV`) and the difference in the
+  spectrum's shape (tolerance `shape-tol`), both from `spectra.shape_diff`.
+  The mean/std of the raw per-frame energies are still reported per value
+  for reference, but the ensemble case is gated on the spectrum, not on
+  that mean.
+
+```python
+from qmregion_selector import QMRegionSelector, QMConvergenceStudy
+
+selector = QMRegionSelector("qm_region.json")   # "dist-threshold": [3.0, 4.5, 6.0, 8.0, 10.0]
+study = QMConvergenceStudy(selector)
+study.write_distance_scan_regions()
+# ... run your ES code in frame_i/shell_<value>/ for every value ...
+study.finalize_reference_region()    # resolves the converged threshold and calls
+                                      # selector.getRefQM()/write_ref_outputs() for it
+
+selector.getGroundCharge()
+selector.getExcitedCharge()          # also becomes the CSA scan's reference spectrum
+selector.getChargeShiftPerResidue()
+
+# "score-threshold": [0.005, 0.010, 0.015, 0.020, 0.030]
+study.write_csa_scan_regions()
+# ... run your ES code in frame_i/csa_<value>/ for every value ...
+summary = study.analyze_csa_scan(study.parse_csa_scan_results())
+```
+
+Since this repo never launches your ES code for you (same as the single-region
+workflow), `example/run_scan_calc.sh` is a batch-runner helper for the "run
+your ES code in every candidate directory" steps above — the scan
+counterpart to `example/run_calc.sh`. It reuses each frame's existing
+`tddft.in`, pointed at that candidate's own `region.qm`:
+
+```bash
+./run_scan_calc.sh shell   # after write_distance_scan_regions()
+./run_scan_calc.sh csa     # after write_csa_scan_regions()
+```
+
+Convergence tolerances (and the Gaussian broadening width used for spectral
+shape) live under an optional `"convergence"` config block; all keys default
+if omitted:
+
+```json
+"convergence": {
+  "energy-tol-eV": 0.04,
+  "shape-tol": 0.02,
+  "sigma-eV": 0.05,
+  "energy-grid-eV": [0.5, 4.5, 1000],
+  "min-stable-points": 2,
+  "shell-dir-pattern": "shell_{value}",
+  "csa-dir-pattern": "csa_{value}"
+}
+```
+
+A single geometry (one frame directory) is a valid input to either scan —
+convergence is then judged on excitation energy alone, since spectral shape
+needs an ensemble of frames to be meaningful.
+
 ---
 
 ## Input configuration (JSON)
@@ -80,6 +166,10 @@ changes:
   parse ES output with.
 - `"charge_scheme"` (default `"vdd"`): which charge partitioning scheme to
   request from that adapter.
+
+`"dist-threshold"` and `"score-threshold"` also each accept a list instead of
+a single number, to run a convergence scan instead of resolving one region —
+see "3) QM-region convergence study" above.
 
 ## Installation
 
